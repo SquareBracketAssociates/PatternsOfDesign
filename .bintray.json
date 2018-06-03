@@ -1,0 +1,27 @@
+{
+    "package": {
+        "name": "PatternsOfDesign",
+        "repo": "wip",
+        "subject": "squarebracketassociates",
+        "desc": "About OO design",
+        "licenses": ["MIT"],
+        "website_url": "https://github.com/SquareBracketAssociates/PatternsOfDesign",
+        "issue_tracker_url": "https://github.com/SquareBracketAssociates/PatternsOfDesign/issues",
+        "vcs_url": "https://github.com/SquareBracketAssociates/PatternsOfDesign.git",
+        "labels": ["work-in-progress"]
+    },
+
+    "version": {
+        "name": "latest",
+        "desc": "Latest successful build"
+    },
+
+    "files": [
+        {
+            "includePattern": "_result/pdf/book.pdf",
+            "uploadPattern": "PatternsOfDesign-wip.pdf",
+            "matrixParams": { "override": 1 }
+        }
+    ],
+    "publish": true
+}
