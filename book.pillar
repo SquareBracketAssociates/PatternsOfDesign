@@ -1,7 +1,8 @@
+
+${inputFile:Chapters/Introduction/Introduction.pillar}$
+
 ${inputFile:Chapters/DoubleDispatch/DoubleDispatch.pillar}$
 ${inputFile:Chapters/PaperStoneScissor/PaperStoneScissor.pillar}$
-
-%${inputFile:Chapters/PaperStoneScissor/PaperStoneScissor.pillar}$
 
 
 ${inputFile:Chapters/Visitor/Visitor.pillar}$
