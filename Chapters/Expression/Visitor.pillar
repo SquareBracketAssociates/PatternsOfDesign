@@ -1,4 +1,4 @@
-!! A little expression interpreter
+!! Understanding Visitors
 @cha:expressions
 
 In this chapter you will build a small mathematical expression interpreter. For example you will be able to build an expression such as  (3 + 4) * 5 and then ask the interpreter to compute its value. You will revisit tests, classes, messages, methods and inheritance. 

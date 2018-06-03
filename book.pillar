@@ -1,6 +1,7 @@
 
 ${inputFile:Chapters/Introduction/Introduction.pillar}$
 
+${inputFile:Chapters/DSL/DSL.pillar}$
 ${inputFile:Chapters/DoubleDispatch/DoubleDispatch.pillar}$
 ${inputFile:Chapters/PaperStoneScissor/PaperStoneScissor.pillar}$
 
