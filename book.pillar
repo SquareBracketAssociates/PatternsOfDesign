@@ -1,34 +1,21 @@
-! Sending messages
-
 ${inputFile:Chapters/DoubleDispatch/DoubleDispatch.pillar}$
 ${inputFile:Chapters/PaperStoneScissor/PaperStoneScissor.pillar}$
 
-!!!! Volume two
-More exercises
-- Uno why not *https://github.com/cdlm/kata-uno*
-
-Lire
-- Implement sokoban
-- Beacons
-- Ants
-- Parser
-- Implementation turtle
+%${inputFile:Chapters/PaperStoneScissor/PaperStoneScissor.pillar}$
 
 
-${inputFile:Chapters/PaperStoneScissor/PaperStoneScissor.pillar}$
+${inputFile:Chapters/Visitor/Visitor.pillar}$
 
 !! Playing with Visitors
-
 Here I should take the slides flow from the design mooc lectures. 
-Visitor then after I should make sure that we only return expressions
-of the same domain and with a stack.
-
-Next one is Visitor!!!
 
 
 !! Playing with Interpreters
 
 Returning an integer is not really nice because we cross boundaries.
+Visitor then after I should make sure that we only return expressions
+of the same domain and with a stack.
+
 
 !!! Using the Pharo execution stack
 
@@ -48,7 +35,19 @@ EEvaluator >> visitMultiplication: aMultiplication
 					value: self pop value * self pop value)  
 ]]]
 
+!! Beacon
 
 !! Parsing alain?
 
+!!  Uno 
+
+*https://github.com/cdlm/kata-uno*
+
+!! Ideas
+Lire
+- Implement sokoban
+
+- Ants
+- Parser
+- Implementation turtle
 
