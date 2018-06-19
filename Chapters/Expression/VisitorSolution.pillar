@@ -29,12 +29,12 @@ EMultiplication  >> evaluate
 !!! Negated message
 
 [[[
-EAddition >>> negated 
+EAddition >> negated 
 	^ ENegation new expression: self
 ]]]
 
 [[[
-EMultiplication >>> negated 
+EMultiplication >> negated 
 	^ ENegation new expression: self
 ]]]
 
