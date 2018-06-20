@@ -1,12 +1,12 @@
 
-${inputFile:Chapters/Introduction/Introduction.pillar}$
+${inputFile:path=Chapters/Introduction/Introduction.pillar}$
 
-${inputFile:value=Chapters/DSL/DSL.pillar}$
-${inputFile:value=Chapters/DoubleDispatch/DoubleDispatch.pillar}$
-${inputFile:value=Chapters/PaperStoneScissor/PaperStoneScissor.pillar}$
+${inputFile:path=Chapters/DSL/DSL.pillar}$
+${inputFile:path=Chapters/DoubleDispatch/DoubleDispatch.pillar}$
+${inputFile:path=Chapters/PaperStoneScissor/PaperStoneScissor.pillar}$
 
 
-${inputFile:value=Chapters/Visitor/Visitor.pillar}$
+${inputFile:path=Chapters/Visitor/Visitor.pillar}$
 
 !! Playing with Visitors
 Here I should take the slides flow from the design mooc lectures. 
