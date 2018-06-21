@@ -23,7 +23,7 @@ Pharo expressions or code snippets are represented either in the text as =='Hell
 ]]]
 
 When we want to show the result of evaluating an expression, we show the result after three chevrons ==>>>== on the next line, like so:
-[[[
+[[[testcase=true
 'Hello' reversed
 >>> 'olleH'
 ]]]

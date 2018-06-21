@@ -589,7 +589,7 @@ EConstant >> printOn: aStream
 !!!! Printing negation
 For a negation we should first put a '-' and then recurvisely call the printing process on the negated expression. Remember that sending the message ==printString== to an expression should return its string representation.  At least until now it will work for constants. 
 
-[[[
+[[[testcase=true
 (EConstant value: 6) printString
 >>> '6'
 ]]]
@@ -890,7 +890,7 @@ Let us explain a bit what we are doing with the expression =={#x -> 10} asDictio
 !!!!!Dictionaries
 A dictionary is a data structure containing pairs (key value) and we can access the value of a given key. It can use any object as key and any object as values. Here we simply use a symbol ==#x== since symbols are unique within the system and as such we are sure that we cannot have two keys looking the same but having different values. 
 
-[[[
+[[[testcase=true
 | d |
 d := Dictionary new
 	at: #x put: 33;
@@ -902,7 +902,7 @@ d at: y
 
 The previous dictionary can be easily expressed more compactly using =={#x -> 33 . #y -> 52 . #z -> 98} asDictionary==.
 
-[[[
+[[[testcase=true
 {#x -> 33 . #y -> 52 . #z -> 98} asDictionary at: #y
 >>> 52 
 ]]]
@@ -910,7 +910,7 @@ The previous dictionary can be easily expressed more compactly using =={#x -> 33
 !!!!! Dynamic Arrays
 The expression =={ }== creates a dynamic array. Dynamic arrays executes their expressions and store the resulting values. 
 
-[[[
+[[[testcase=true
 {2 + 3 . 6 - 2 . 7-2 }
 >>> ==#(5 4 5)==
 ]]]
@@ -918,7 +918,7 @@ The expression =={ }== creates a dynamic array. Dynamic arrays executes their ex
 !!!!! Pairs
 The expression ==#x -> 10== creates a pair with a key and a value.
 
-[[[
+[[[testcase=true
 | p |
 p := #x -> 10.
 p key 

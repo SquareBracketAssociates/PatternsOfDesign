@@ -345,7 +345,7 @@ Why? Because it means that from a client perspective, she/he can treat the recei
 
 For example we can write the following expression that adds a die and a dieHandle to a collection and collect the different values (we convert the result into an array so that we can print it in the book).
 
-[[[
+[[[testcase=true
 | col |
 col := OrderedCollection new. 
 col add: (Die withFaces: 20).

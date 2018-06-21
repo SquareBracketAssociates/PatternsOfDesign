@@ -143,12 +143,12 @@ Identifying responsibilities will help you to discover missing objects, and it w
 
 
 %! Appendix
-%${inputFile:Chapters/SyntaxNutshell/SyntaxNutshell.pillar}$
+%${inputFile:path=Chapters/SyntaxNutshell/SyntaxNutshell.pillar}$
 ! The following chapters are about to be written
 
-${inputFile:Chapters/Converter/Converter2.pillar}$
+${inputFile:path=Chapters/Converter/Converter2.pillar}$
 
-${inputFile:Chapters/Tamagoshi/Tamagoshi.pillar}$
+${inputFile:path=Chapters/Tamagoshi/Tamagoshi.pillar}$
 
 Turtle
 JoeTheBox
