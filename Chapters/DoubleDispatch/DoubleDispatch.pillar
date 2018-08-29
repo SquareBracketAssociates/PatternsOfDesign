@@ -13,7 +13,7 @@ Double dispatch is based on the ''Don't ask, tell'' object-oriented principle ap
 
 In a previous chapter you implemented a small DSL to add dice and manage die handles. With this DSL, you could create dice and add them to a die handle. Later on you could sum two different die handles and obtain a new one following the "Dungeons and Dragons" ruling book. 
 
-The following tests show these two behavior: First the dice handle creation and second the sum of die handles.
+The following tests show these two behaviors: First the dice handle creation and second the sum of die handles.
 
 [[[
 DieHandleTest >> testCreationAdding
