@@ -7,13 +7,13 @@ One of the challenges is that the message ==\+== should be able to manage differ
 
 Double dispatch is a technic that avoids hardcoding type checks and also is able to define incrementally the behavior handling all the possible cases. Indeed double dispatch does not use any explicit conditionals and is the basis of more advanced Design Patterns such as the Visitor. 
 
-Double dispatch is based on the ''Don't ask, tell'' object-oriented principle applied twice. In the case of the ==\+== message, there is a first dispatch to select the adequate method. Then a second dispatch happens when in this method a new message is sent the ''argument'' of the ==\+== message telling this argument the way the current receiver should be summed. This description is clearly too abstract so we will go over a full example to explain it. 
+Double dispatch is based on the ''Don't ask, tell'' object-oriented principle applied twice. In the case of the ==\+== message, there is a first dispatch to select the adequate method. Then a second dispatch happens when in this method a new message is sent to the ''argument'' of the ==\+== message telling this argument the way the current receiver should be summed. This description is clearly too abstract so we will go over a full example to explain it. 
 
 !!! A little reminder
 
 In a previous chapter you implemented a small DSL to add dice and manage die handles. With this DSL, you could create dice and add them to a die handle. Later on you could sum two different die handles and obtain a new one following the "Dungeons and Dragons" ruling book. 
 
-The following tests show these two behavior: First the dice handle creation and second the sum of die handles.
+The following tests show these two behaviors: First the dice handle creation and second the sum of die handles.
 
 [[[
 DieHandleTest >> testCreationAdding
@@ -47,9 +47,9 @@ DieHandle >> + aDieHandle
 
 !!! New requirements 
 
-The first requirement we have is that we want to be able to add two dices together and of course we should obtain a die handle as illustrated by the following test. 
+The first requirement we have is that we want to be able to add two dice together and of course we should obtain a die handle as illustrated by the following test. 
 
-We want to add two dices together:
+We want to add two dice together:
 
 [[[
 (Die withFaces: 6) + (Die withFaces: 6)
@@ -70,7 +70,7 @@ The second requirement is that we want to be able to mix and add a die to a die 
 
 Since we are test-infested, we turn such expected behavior into automatically testable expected behavior: we write them as tests. 
 
-We want to add two dices together:
+We want to add two dice together:
 [[[
 DieTest >> testAddTwoDice
 	| hd |
@@ -105,9 +105,9 @@ DieHandleTest >> testAddingAnHandleWithADie
 Now we are ready to implement such requirements. 
 
 
-!!! A first implementation
+!!! The first implementation
 
-A first solution is to explicitly type check the argument to decide what to do. 
+The first solution is to explicitly type check the argument to decide what to do. 
 
 [[[
 DieHandle >> + aDieOrADieHandle
@@ -132,15 +132,15 @@ Die >> + aDieOrADieHandle
 	^ selfAsDieHandle + aDieOrADieHandle
 ]]]
 
-The problem of this solution is that it does not scale. As soon as we will have other kinds of arguments we will have to check more and more cases. You may think that this is just a spurious argument. But when you have a model that has around 35 different kinds of nodes as in Pillar the document processing system used to produce this book, this kind of testing logic becomes a nightmare to maintain and extend.
+The problem of this solution is that it does not scale. As soon as we will have other kinds of arguments we will have to check more and more cases. You may think that this is just a spurious argument. But when you have a model that has around 35 different kinds of nodes as in Pillar, the document processing system used to produce this book, this kind of testing logic becomes a nightmare to maintain and extend.
 
 !!! Sketching double dispatch
 We can do better.  The logic of the solution we have in mind is quite simple but it may be destabilizing at first.
 Let us sketch it.
 
-- When we execute a method we know its receiver and the kind of receiver we have: it can be a die or a die handle. The method dispatch will select the correct method at runtime. Imagine that we have two ==\+== methods for each class ==Die== and ==DieHandle==. When a given method ==\+== will be executed, we will know the exact kind of  the receiver. For example, when the method ==\+== defined on the class ==Die== will be executed, we will know that the receiver is a die (instance of this class). Similarly when the method ==\+== defined on the class ==DieHandle== will be executed, we will know that the message receiver is a die handle. This is the power of method dispatch: it selects the right method based on the message receiver.
+- When we execute a method we know its receiver and the kind of receiver we have: it can be a die or a die handle. The method dispatch will select the correct method at runtime. Imagine that we have two ==\+== methods for each class ==Die== and ==DieHandle==. When a given method ==\+== will be executed, we will know the exact kind of the receiver. For example, when the method ==\+== defined on the class ==Die== will be executed, we will know that the receiver is a die (instance of this class). Similarly when the method ==\+== defined on the class ==DieHandle== will be executed, we will know that the message receiver is a die handle. This is the power of method dispatch: it selects the right method based on the message receiver.
 
-- Then the idea is to tell the argument that we want to sum it with that given receiver. It means that each ==\+== method on the different class has just to send a different message based on the fact that the receiver was a die or a die handle to its argument and let the method dispatch to act once again. After this second dispatch, the correct method will be selected. 
+- Then the idea is to tell the argument that we want to sum it with that given receiver. It means that each ==\+== method on a different class has just to send a different message based on the fact that the receiver was a die or a die handle to its argument and let the method dispatch to act once again. After this second dispatch, the correct method will be selected. 
 
 But let us makes this really concrete.
 
@@ -193,7 +193,7 @@ Die >> + aDicable
 	^ aDicable sumWithDie: self
 ]]]
 
-We tell the argument ==aDicable== (which can be a die or a die handle) that we want to sum to it a die (we know that  ==self== in this method is a ==Die== because this is the method of this class that is executed). When rewritting the ==\+== method, we switched ==self== and ==aDicable== to send the new message ==sumWithDie:== to the argument (==aDicable==). This switch kicks a new method dispatch and we finally have a double dispatch (one of ==\+== and one for ==sumWithDie:==).
+We tell the argument ==aDicable== (which can be a die or a die handle) that we want to add a die to it (we know that  ==self== in this method is a ==Die== because this is the method of this class that is executed). When rewritting the ==\+== method, we switched ==self== and ==aDicable== to send the new message ==sumWithDie:== to the argument (==aDicable==). This switch kicks a new method dispatch and we finally have a double dispatch (one of ==\+== and one for ==sumWithDie:==).
 
 In our two tests ==testAddTwoDice== and ==testAddingADieAndHandle== we know that the receiver is a die because the method is defined in the class of ==Die==. At this point the test ==testAddTwoDice== should pass because we are adding two dice as shown in Figure *@figDieDoubleDispatchPartialArgDie*.
 
@@ -251,18 +251,18 @@ DieHandle >> sumWithHandle: aDieHandle
 	^ handle
 ]]]
 
-Now we can define a more powerful version of ==\+== by simply sending the message ==sumWithHandle:== to the ""argument"" (aDicable) of the message ==\+==. Again we send a message to the argument (==aDicable==) to kick in a new message lookup and dispatch  for the message ==sumWithHandle:==.
+Now we can define a more powerful version of ==\+== by simply sending the message ==sumWithHandle:== to the ""argument"" (aDicable) of the message ==\+==. Again we send a message to the argument (==aDicable==) to kick in a new message lookup and dispatch for the message ==sumWithHandle:==.
 
 [[[
 DieHandle >> + aDicable
 	^ aDicable sumWithHandle: self
 ]]]
 
-We said that this is version of ==\+== is more powerful than the one of ==sumWithHandle:== because once we will implement the missing method ==sumWithHandle:== on the class ==Die==, the ==\+== method will be able to sum die handle with die or die handle. 
+We said that this is version of ==\+== is more powerful than the one of ==sumWithHandle:== because once we will implement the missing method ==sumWithHandle:== on the class ==Die==, the ==\+== method will be able to sum a die handle with a die or two die handles. 
 
 +Handling all the cases: summing a die/die handle with a die/die handle .>file://figures/DieDoubleDispatchFull.pdf|width=90|label=figDieDoubleDispatchFull+
 
-Up until here we did not change much and all the tests adding two die handle should continue to run. 
+Up until here we did not change much and all the tests adding two die handles should continue to run. 
 
 !!! sumWithHandle: on Die class
 To get the possibility to sum a die handle with a single die, we just have to define a new method ==sumWithHandle:== on the ==Die== class. 
@@ -297,7 +297,7 @@ DieHandleTest >> testAddingAnHandleWithADie
 
 !!! Conclusion
 
-When we step back, we see that we applied twice the ''Don't ask, tell'' principle:
+When we step back, we see that we applied the ''Don't ask, tell'' principle twice:
 First the message ==\+== selects the corresponding methods in either ==Die== or ==DieHandle== classes. Then a more specific message is sent to the argument and the dispatch kicks in again selecting the correct method for the messages ==sumWithDie:== or ==sumWithHandle:==.
 
 In this chapter we presented double dispatch. The idea is to use method dispatch two times.

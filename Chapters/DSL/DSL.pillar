@@ -1,7 +1,7 @@
 !! Crafting a simple embedded DSL with Pharo
 @cha:dsl
 
-In this chapter you will develop a simple domain specific language (DSL) for rolling dice. Players of games such as Dungeons \& Dragons are familiar with such DSL. An example of such DSL is the following expression: ==2 D20 + 1 D6== which means that we should roll two 20-faces dices and one 6 faces die. 
+In this chapter you will develop a simple domain specific language (DSL) for rolling dice. Players of games such as Dungeons \& Dragons are familiar with such DSL. An example of such DSL is the following expression: ==2 D20 + 1 D6== which means that we should roll two 20-faces dice and one 6-faces die. 
 It is called an embedded DSL because the DSL uses the syntax of the language used to implement it. Here we use the Pharo syntax to implement the Dungeons \& Dragons rolling die language. 
 
 This little exercise shows how we can (1) simply reuse traditional operator such as ==\+==, (2) develop an embedded domain specific language and (3) use class extensions (the fact that we can define a method in another package than the one of the class of the method).
@@ -11,7 +11,7 @@ This little exercise shows how we can (1) simply reuse traditional operator such
 Using the code browser, define a package named ==Dice== or any name you like.
 
 !!!! Create a test 
-It is always empowering to verify that the code we write is always working as we defining it. For this purpose you should create a unit test. Remember unit testing was promoted by K. Beck first in the ancestor of Pharo. Nowadays this is a common practice but this is always useful to remember our roots!
+It is always empowering to verify that the code we write is always working as we are defining it. For this purpose you should create a unit test. Remember unit testing was promoted by K. Beck first in the ancestor of Pharo. Nowadays this is a common practice but it is always useful to remember our roots!
 
 Define the class ==DieTest== as a subclass of ==TestCase== as follows: 
 
@@ -80,7 +80,7 @@ You should get an inspector like the one shown in Figure *@figDiceNoDetail*. Wit
  
 
 !!! Creating another test
-But better, let us define a test that verifies that rolling a new created dice with a default 6 faces only returns 
+But better, let us define a test that verifies that rolling a newly created dice with a default 6 faces only returns 
 value comprised between 1 and 6. This is what the following test method is actually specifying.
  
 [[[
@@ -92,12 +92,13 @@ DieTest >> testRolling
 
 ""Important"" Often it is better to define the test even before the code it tests. Why? Because you can think about the API of your objects and a scenario that illustrate their correct behavior. It helps you to program your solution.
 
+
 !!! Instance creation interface
-We would like to get a simpler way to create ==Die== instances. For example we want to create a 20-faces die as follows: ==Die withFaces: 20== instead of always have to send the new message to the class as in ==Die new faces: 20==.
+We would like to get a simpler way to create ==Die== instances. For example we want to create a 20-faces die as follows: ==Die withFaces: 20== instead of always having to send the new message to the class as in ==Die new faces: 20==.
 Both expressions are creating the same die but one is shorter.
 
 Let us look at it: 
-- In the expression ==Die withFaces:==, the message ==withFaces:== is sent to the class ==Die==. It is not new, we constantly sent the message ==new== to ==Die== to created instances. 
+- In the expression ==Die withFaces:==, the message ==withFaces:== is sent to the class ==Die==. It is not new, we constantly sent the message ==new== to ==Die== to create instances. 
 - Therefore we should define a method that will be executed 
 
 Let us define a test for it.
@@ -131,10 +132,10 @@ Let us explain this method
 - Then the method sends the message ==faces:== to the instance and 
 - Finally returns the newly created instance.
 
-Pay really attention that a class method ==withFaces:== is sent to a class, and an instance method sent to the newly created instance ==faces:==. Note that the class method could have also named ==faces:== or any name we want, it does not matter, it is executed when the receiver is the class ==Die==.
+Pay attention that a class method ==withFaces:== is sent to a class, and an instance method is sent to the newly created instance ==faces:==. Note that the class method could have also named ==faces:== or any name we want, it does not matter, it is executed when the receiver is the class ==Die==.
 
 
-If you execute it will not work since we did not create yet the method ==faces:==.  This is now the time to define it. Pay attention the method ==faces:== is sent to an instance of the class ==Die== and not the class itself. It is an instance method, therefore make sure that you deselected the class button before editing it.
+If you execute it will not work since we did not yet create the method ==faces:==. Now is the time to define it. Pay attention that method ==faces:== is sent to an instance of the class ==Die== and not the class itself. It is an instance method, therefore make sure that you deselect the class button before editing it.
 
 [[[
 Die >> faces: aNumber
@@ -273,7 +274,7 @@ DieHandle new
 	yourself
 ]]]
 
-This is the  message ==printOn:== that is responsible to provide a textual representation of the message receiver. By default, it just prints the name of the class prefixed with =='a'== or =='an'==. So we will enhance the ==printOn:== method of the ==Die== class to provide more information. Here we simply add the number of faces surrounded by parenthesis. The ==printOn:== message is sent with a stream as argument. This is in such stream that we should add information. We use the message ==nextPutAll:== to add a number of characters to the stream. We concatenate the characters to compose ==()== using the message ==,== comma defined on collections (and that concatenate collections and strings).
+This is the  message ==printOn:== that is responsible to provide a textual representation of the message receiver. By default, it just prints the name of the class prefixed with =='a'== or =='an'==. So we will enhance the ==printOn:== method of the ==Die== class to provide more information. Here we simply add the number of faces surrounded by parenthesis. The ==printOn:== message is sent with a stream as argument. It is in this stream that we should add information. We use the message ==nextPutAll:== to add a number of characters to the stream. We concatenate the characters to compose ==()== using the message ==,== comma defined on collections (and that concatenate collections and strings).
 
 [[[
 Die >> printOn: aStream
@@ -325,7 +326,7 @@ handle := DieHandle new
 handle roll
 ]]]
 
-Define a test to cover such behavior. Rolling an handle of n dice should be between n and the sum of the face number of each die. 
+Define a test to cover such behavior. Rolling a handle of n dice should be between n and the sum of the face number of each die. 
 
 [[[
 DieHandleTest >> testRoll
@@ -335,15 +336,16 @@ DieHandleTest >> testRoll
 !!! About Dice and DieHandle API
 
 It is worth to spend some times looking at the relationship between ==DieHandle== and ==Dice==. 
-A die handle is composed of dices. What is an important design decision is that the API of the main behavior (==roll==) is the same for a die or a die handle. You can send the message ==roll== to a dice or a die handle. This is an important property.
+A die handle is composed of dice. What is an important design decision is that the API of the main behavior (==roll==) is the same for a die or a die handle. You can send the message ==roll== to a die or a die handle. This is an important property.
 
-Why? Because it means that from a client perspective, she/he can treat the receiver without having to take care about the kind of object it is manipulating. A client just sends the message ==roll== to an object and get back a number (as shown in Figure *@figDieHandleComposition*). The client is not concerned by the fact that the receiver is composed out a simple object or a complex one. Such design decision supports the ''Don't ask, tell'' principle.
+Why? Because it means that from a client perspective, they can treat the receiver without having to take care about the kind of object it is manipulating. A client just sends the message ==roll== to an object and gets back a number (as shown in Figure *@figDieHandleComposition*). The client is not concerned by the fact that the receiver is composed out a simple object or a complex one. Such design decision supports the ''Don't ask, tell'' principle.
 
 +A polymorphic API supports the ''Don't ask, tell'' principle.>file://figures/DiceHandleComposition.pdf|width=60|label=figDieHandleComposition+
 
-""Important"" Offering polymorphic API is a tenet of good object-oriented design. It enforces the ''Don't ask, tell'' principle. Clients do not have to worry about the type of the objects to whom they talk to. 
 
-For example we can write the following expression that adds a die and a dieHandle to a collection and collect the different values (we convert the result into an array so that we can print it in the book).
+""Important"" Offering polymorphic API is a tenet of good object-oriented design. It enforces the ''Don't ask, tell'' principle. Clients do not have to worry about the type of the objects to which they talk to. 
+
+For example we can write the following expression that adds a die and a dieHandle to a collection and collects the different values (we convert the result into an array so that we can print it in the book).
 
 [[[testcase=true
 | col |
@@ -355,14 +357,14 @@ col add: (DieHandle new addDie: (Die withFaces: 4); yourself).
 ]]]
 
 !!!! About composition
-Composite objects such document objects (a book is composed of chapters, a chapter is composed of sections, a section is composed of paragraphs) have often a more complex composition relationship than the composition between die and die handle. Often the composition is recursive in the sense that an element can be the whole: for example, a diagram can be composed of lines, circles, and other diagrams. We will see an example of such composition in the Expression Chapter *@cha:expressions*.
+Composite objects such as document objects (a book is composed of chapters, a chapter is composed of sections, a section is composed of paragraphs) often have a more complex composition relationship than the composition between a die and a die handle. Often the composition is recursive in the sense that an element can be the whole: for example, a diagram can be composed of lines, circles, and other diagrams. We will see an example of such composition in the Expression Chapter *@cha:expressions*.
 
 !!! Role playing syntax
 
 Now we are ready to offer a syntax following practice of role playing game, i.e., using ==2 D20== to create a handle of two dice with 20 faces each.  For this purpose we will define class extensions: we will define methods in the class ==Integer== but these methods will be only available when the package Dice will be loaded. 
 
-But first let us specify  what we would like to obtain by writing a new  test in the class ==DieHandleTest==. Remember
-to always take  any opportunity to write tests.  When we execute ==2 D20== we  should get a new handle  composed of two
+But first let us specify  what we would like to obtain by writing a new test in the class ==DieHandleTest==. Remember
+to always take any opportunity to write tests.  When we execute ==2 D20== we  should get a new handle  composed of two
 dice and can verify that. This is what the method ==testSimpleHandle== is doing.
 
 [[[
@@ -420,7 +422,7 @@ Integer >> D20
 
 We have now a compact form to create dice and we are ready for the last part: the addition of handles. 
 
-!!! Handle's addition
+!!! Handles addition
 Now what is missing is that possibility to add several handles as follows: ==2 D20 + 3 D10==. Of course let's write a test first to be clear on what we mean.
 
 [[[
@@ -432,9 +434,9 @@ DieHandleTest >> testSumming
 
 We will define a method ==\+== on the ==DieHandle== class. In other languages this is often not possible or is based on operator overloading. In Pharo ==\+== is just a message as any other, therefore we can define it on the classes we want.
 
-Now we should ask ourself what is the semantics of adding two handles. Should we modify the receiver of the expression or create a new one. We preferred a more functional style and choose to create a third one. 
+Now we should ask ourself what is the semantics of adding two handles. Should we modify the receiver of the expression or create a new one. We preferred a more functional style and chose to create a third one. 
 
-The method ==\+== creates a new handle then add to it the dice of the receiver and the one of the handle passed as argument to the message. Finally we return it. 
+The method ==\+== creates a new handle then adds the dice of the receiver to it, and then one of the handles passed as argument to the message. Finally we return it. 
 
 [[[
 DieHandle >> + aDieHandle
