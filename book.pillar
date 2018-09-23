@@ -1,11 +1,11 @@
 
+
+
 ${inputFile:path=Chapters/Introduction/Introduction.pillar}$
 
 ${inputFile:path=Chapters/DSL/DSL.pillar}$
 ${inputFile:path=Chapters/DoubleDispatch/DoubleDispatch.pillar}$
 ${inputFile:path=Chapters/PaperStoneScissor/PaperStoneScissor.pillar}$
-
-
 ${inputFile:path=Chapters/Visitor/Visitor.pillar}$
 
 
