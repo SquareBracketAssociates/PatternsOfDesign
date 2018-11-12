@@ -1062,7 +1062,7 @@ sumWithDie: aDie}</string>
 		<key>CurrentSheet</key>
 		<integer>0</integer>
 		<key>Frame</key>
-		<string>{{1195, 451}, {1177, 778}}</string>
+		<string>{{1196, 456}, {1177, 778}}</string>
 		<key>ShowInfo</key>
 		<false/>
 		<key>ShowRuler</key>
