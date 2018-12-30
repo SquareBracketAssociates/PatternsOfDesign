@@ -3,15 +3,23 @@
 
 ${inputFile:path=Chapters/Introduction/Introduction.pillar}$
 
+!! Getting started
+
 ${inputFile:path=Chapters/DSL/DSL.pillar}$
+${inputFile:path=Chapters/Expression/Expression.pillar}$
+
+!! Power of Messages
 ${inputFile:path=Chapters/DoubleDispatch/DoubleDispatch.pillar}$
 ${inputFile:path=Chapters/PaperStoneScissor/PaperStoneScissor.pillar}$
+
+!! Playing with Visitors
+Here I should take the slides flow from the design mooc lectures. 
+
 ${inputFile:path=Chapters/Visitor/Visitor.pillar}$
 
 
 
-!! Playing with Visitors
-Here I should take the slides flow from the design mooc lectures. 
+
 
 
 !! Playing with Interpreters
