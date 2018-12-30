@@ -1047,7 +1047,7 @@ ENegation >> evaluateWith: anObject
 
 Figure *@fig:ExpressionsFinal* shows the final situation.
 
-+Variables and their evaluation.>file://figures/ExpressionsHierarchyFinal.png|width=70|label=fig:ExpressionsFinal+
++Variables and their evaluation.>file://figures/ExpressionsHierarchyFinal.pdf|width=70|label=fig:ExpressionsFinal+
 
 !!! Conclusion
 This little exercise was full of learning potential. Here is a little summary of what we explained and we hope you understood. 
