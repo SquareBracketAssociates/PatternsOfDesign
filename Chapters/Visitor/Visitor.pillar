@@ -61,9 +61,9 @@ EEvaluatorVisitor >> visitConstant: aConstant
 	^ aConstant value
 ]]]
 
-
+itunes
 !!!! Adding a test class
-To make sure that we control what we are doing, we add a test class. 
+To make sure that we control what we are doing, we add a test class.
 
 [[[
 TestCase subclass: #EEvaluatorVisitorTest
@@ -80,24 +80,34 @@ EEvaluatorVisitorTest >> testVisitConstantReturnsConstantValue
 
 	| constant result |
 	constant := EConstant value: 5.
-	result := constant accept: EEvaluatorVisitor new.	
+	result := constant accept: EEvaluatorVisitor new.
 	self assert: result equals: 5
 ]]]
 
+We can rewrite the old evaluateWith: method to invoke the visitor.
 [[[
 EConstant >> evaluateWith: anObject
 	
 	^ self accept: EEvaluatorVisitor new
 ]]]
 
+You can execute your new and old tests and both should work.
 
 !!! Now handling addition
+We will do the same with adddition.
+First we define a new ==accept:== method on the Addition class to invoke the visitor. 
 
 [[[
 EAddition >> accept: aVisitor
 
-	aVisitor visitAddition: self
+	^ aVisitor visitAddition: self
 ]]]
+
+Notice again that the visitor announces itself and that the addition tells him that it should be treated this time as an addition.
+This pattern is key to the visitor logic.
+You will see that we will repeat again and again.
+Each expression 
+
 
 [[[
 EEvaluatorVisitorTest >> testVisitAdditionReturnsAdditionResult
@@ -106,7 +116,6 @@ EEvaluatorVisitorTest >> testVisitAdditionReturnsAdditionResult
 	expression := EAddition
 		left: (EConstant value: 7)
 		right: (EConstant value: -2).
-	
 	result := expression accept: EEvaluatorVisitor new.
 	
 	self assert: result equals: 5
@@ -146,17 +155,6 @@ EEvaluatorVisitor >> visitAddition: anEAddition
 	^ evaluationOfLeft + evaluationOfRight
 ]]]
 
-[[[
-EAddition >> accept: aVisitor
-
-	^ aVisitor visitAddition: self
-]]]
-
-[[[
-EAddition >> evaluateWith: anObject
-	
-	^ self accept: EEvaluatorVisitor new
-]]]
 
 [[[
 EAddition >> evaluateWith: anObject
