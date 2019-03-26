@@ -24,6 +24,15 @@ install:
 script:
   - ./pillar/build/pillar build pdf
 
+after_success:
+  - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+  - mv _result/pdf/book.pdf PatternsOfDesign-wip.pdf
+  - bash upload.sh PatternsOfDesign-wip.pdf
+
+branches:
+  except:
+    - /^(?i:continuous)$/
+
 deploy:
 - provider: bintray
   file: .bintray.json
