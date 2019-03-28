@@ -106,8 +106,9 @@ EAddition >> accept: aVisitor
 Notice again that the visitor announces itself and that the addition tells him that it should be treated this time as an addition.
 This pattern is key to the visitor logic.
 You will see that we will repeat again and again.
-Each expression 
+Each expression will declare how it should considered by the visitor. 
 
+Now we can define a new test to validate that the execution of an addition is correct.
 
 [[[
 EEvaluatorVisitorTest >> testVisitAdditionReturnsAdditionResult
@@ -116,16 +117,18 @@ EEvaluatorVisitorTest >> testVisitAdditionReturnsAdditionResult
 	expression := EAddition
 		left: (EConstant value: 7)
 		right: (EConstant value: -2).
-	result := expression accept: EEvaluatorVisitor new.
-	
+	result := expression accept: EEvaluatorVisitor new.	
 	self assert: result equals: 5
 ]]]
 
+We start to define an abstract method ==visitAddition:==.
+
 [[[
-EEvaluatorVisitor >> visitAddition: anEAddition 
-	self shouldBeImplemented.
+EEvaluatorVisitor >> visitAddition: anEAddition
+	self shouldBeImplemented
 ]]]
 
+We create the accessors ==left== and ==right==.
 
 [[[
 EBinaryExpression >> left
@@ -137,6 +140,8 @@ EBinaryExpression >> right
 	^ right
 ]]]
 
+Now we are ready to define the method ==visitAddition:== as follows:
+
 [[[
 EEvaluatorVisitor >> visitAddition: anEAddition
 	
@@ -146,52 +151,47 @@ EEvaluatorVisitor >> visitAddition: anEAddition
 	^ evaluationOfLeft + evaluationOfRight
 ]]]
 
-[[[
-EEvaluatorVisitor >> visitAddition: anEAddition
-	
-	| evaluationOfLeft evaluationOfRight |
-	evaluationOfLeft := anEAddition left accept: self.
-	evaluationOfRight := anEAddition right accept: self.
-	^ evaluationOfLeft + evaluationOfRight
-]]]
-
+We also define the method ==evaluateWith:==.
 
 [[[
 EAddition >> evaluateWith: anObject
 	^ (right evaluateWith: anObject) + (left evaluateWith: anObject)
 ]]]
 
+!!! Supporting negation
+
+We will now focus on the negation.
+
 [[[
-EEvaluatorVisitorTest >> testVisitNegationReturnsNegatedContant
+EEvaluatorVisitorTest >> testVisitNegationReturnsNegatedConstant
 
 	| expression result |
 	expression := (EConstant value: 7) negated.
 	result := expression accept: EEvaluatorVisitor new.
-	
 	self assert: result equals: -7
 ]]]
 
-[[[
-ENegation >> accept: anEEvaluatorVisitor 
-	self shouldBeImplemented.
-]]]
+We follow the same process.
+We define the ==accept:== method for the negation.
 
 [[[
 ENegation >> accept: aVisitor
-	
 	^ aVisitor visitNegation: self
 ]]]
 
 [[[
-EEvaluatorVisitor >> visitNegation: anENegation 
+EEvaluatorVisitor >> visitNegation: anENegation
 	self shouldBeImplemented.
 ]]]
 
+We add the ==expression== accessor.
+
 [[[
 ENegation >> expression
-	
 	^ expression
 ]]]
+
+We define the ==visitNegation:== as follows: 
 
 [[[
 EEvaluatorVisitor >> visitNegation: anENegation 
@@ -201,16 +201,22 @@ EEvaluatorVisitor >> visitNegation: anENegation
 	^ aNumber negated
 ]]]
 
+We can define the ==evaluateWith:== method on a negation to invoke the visitor.
+
 [[[
 ENegation >> evaluateWith: anObject
-	
 	^ self accept: EEvaluatorVisitor new
 ]]]
+
+We can also redefine the method ==evaluateWith:== in a more recursive way.
 
 [[[
 ENegation >> evaluateWith: anObject
 	^ (expression evaluateWith: anObject) negated
 ]]]
+
+
+!!! Supporting Multiplication
 
 [[[
 EEvaluatorVisitorTest >> testVisitMultiplicationReturnsMultiplicationResult
@@ -251,6 +257,8 @@ EEvaluatorVisitor >> visitMultiplication: anEMultiplication
 ]]]
 
 
+!!! Supporting Division
+
 [[[
 EDivision >> numerator
 	^ numerator
@@ -285,14 +293,12 @@ EEvaluatorVisitorTest >> testVisitDivisionReturnsDivisionResult
 	expression := EDivision
 		numerator: (EConstant value: 6)
 		denominator: (EConstant value: 3).
-	
 	result := expression accept: EEvaluatorVisitor new.
-	
 	self assert: result equals: 2
 ]]]
 
 [[[
-EDivision class class >> numerator: aNumeratorExpression denominator: aDenominatorExpression
+EDivision class >> numerator: aNumeratorExpression denominator: aDenominatorExpression
 
 	^ self new
 		numerator: aNumeratorExpression;
@@ -300,14 +306,6 @@ EDivision class class >> numerator: aNumeratorExpression denominator: aDenominat
 		yourself
 ]]]
 
-[[[
-EDivision class class >> numerator: aNumeratorExpression denominator: aDenominatorExpression
-
-	^ self new
-		numerator: aNumeratorExpression;
-		denominator: aDenominatorExpression;
-		yourself
-]]]
 
 [[[
 EEvaluatorVisitorTest >> testVisitDivisionByZeroThrowsException
@@ -315,8 +313,7 @@ EEvaluatorVisitorTest >> testVisitDivisionByZeroThrowsException
 	| expression result |
 	expression := EDivision
 		numerator: (EConstant value: 6)
-		denominator: (EConstant value: 0).
-	
+		denominator: (EConstant value: 0).	
 	self
 		should: [expression accept: EEvaluatorVisitor new]
 		raise: EZeroDenominator
@@ -335,9 +332,11 @@ EEvaluatorVisitorTest >> testVisitDivisionByZeroThrowsException
 		raise: EZeroDenominator
 ]]]
 
+
+!!! Supporting variable
+
 [[[
 EVariable >> accept: aVisitor
-
 	^ aVisitor visitVariable: self
 ]]]
 
@@ -367,14 +366,12 @@ EEvaluatorVisitorTest >> testVisitVariableReturnsVariableValue
 
 	| expression result |
 	expression := (EVariable id: #answerToTheQuestion) negated.
-
 	result := expression accept: EEvaluatorVisitor new.
-	
 	self assert: result equals: 42
 ]]]
 
 [[[
-EVariable class class >> id: anId
+EVariable class >> id: anId
 
 	^ self new
 		id: anId;
@@ -382,7 +379,7 @@ EVariable class class >> id: anId
 ]]]
 
 [[[
-EVariable class class >> id: anId
+EVariable class >> id: anId
 
 	^ self new
 		id: anId;
@@ -435,13 +432,6 @@ EEvaluatorVisitorTest >> testVisitVariableReturnsVariableValue
 
 [[[
 EDivision >> evaluateWith: anObject
-	
-	^ self accept: EEvaluatorVisitor new
-]]]
-
-[[[
-ENegation >> evaluateWith: anObject
-	
 	^ self accept: EEvaluatorVisitor new
 ]]]
 
@@ -452,8 +442,7 @@ EMultiplication >> evaluateWith: anObject
 ]]]
 
 [[[
-EAddition >> evaluateWith: anObject
-	
+EAddition >> evaluateWith: anObject	
 	^ self accept: EEvaluatorVisitor new
 ]]]
 
@@ -591,7 +580,6 @@ EMultiplication >> evaluateWith: anObject
 EEvaluatorVisitorTest >> testVisitDivisionReturnsDivisionResult
 
 	| expression result |
-	1/0.
 	expression := EDivision
 		numerator: (EConstant value: 6)
 		denominator: (EConstant value: 3).
@@ -601,29 +589,6 @@ EEvaluatorVisitorTest >> testVisitDivisionReturnsDivisionResult
 	self assert: result equals: 2
 ]]]
 
-[[[
-EEvaluatorVisitorTest >> testVisitDivisionReturnsDivisionResult
-
-	| expression result |
-	expression := EDivision
-		numerator: (EConstant value: 6)
-		denominator: (EConstant value: 3).
-	
-	result := expression accept: EEvaluatorVisitor new.
-	
-	self assert: result equals: 2
-]]]
-
-[[[
-EEvaluatorVisitor >> visitMultiplication: anEMultiplication 
-
-	| evaluationOfLeft evaluationOfRight |
-		1/0.
-
-	evaluationOfLeft := anEMultiplication left accept: self.
-	evaluationOfRight := anEMultiplication right accept: self.
-	^ evaluationOfLeft * evaluationOfRight
-]]]
 
 [[[
 EEvaluatorVisitor >> visitMultiplication: anEMultiplication 
@@ -634,13 +599,8 @@ EEvaluatorVisitor >> visitMultiplication: anEMultiplication
 	^ evaluationOfLeft * evaluationOfRight
 ]]]
 
-[[[
-Object subclass: #EPrinterVisitor
-	instanceVariableNames: 'bindings'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Expressions-Model'
-]]]
+
+!!! A new visitor
 
 [[[
 Object subclass: #EPrinterVisitor
@@ -652,15 +612,9 @@ Object subclass: #EPrinterVisitor
 
 [[[
 EPrinterVisitor >> visitConstant: aConstant
-
 	^ aConstant value asString
 ]]]
 
-[[[
-EPrinterVisitor >> visitConstant: aConstant
-
-	^ aConstant value asString
-]]]
 
 [[[
 EPrinterVisitor >> visitMutiplication: aMultiplication
@@ -711,31 +665,9 @@ EPrinterVisitor >> visitDivision: aDivision
 [[[
 EPrinterVisitor >> visitNegation: aNegation
 
-	| left right subExpression |
-	subExpression := aNegation expression accept: self.
-	^ subExpression , ' negated'
-]]]
-
-[[[
-EPrinterVisitor >> visitNegation: aNegation
-
-	|  subExpression |
-	subExpression := aNegation expression accept: self.
-	^ subExpression , ' negated'
-]]]
-
-[[[
-EPrinterVisitor >> visitNegation: aNegation
-
 	| subExpression |
 	subExpression := aNegation expression accept: self.
 	^ subExpression , ' negated'
-]]]
-
-[[[
-EPrinterVisitor >> visitVariable: aVariable
-
-	^ aVariable id
 ]]]
 
 [[[
