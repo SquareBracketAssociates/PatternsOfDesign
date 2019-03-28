@@ -602,6 +602,12 @@ EEvaluatorVisitor >> visitMultiplication: anEMultiplication
 
 !!! A new visitor
 
+Using a visitor is particularly interesting when we have multiple behavior that we want to encapsulate.
+Such behaviors are applied on a structure without mixing the state of the structure with the state of the behavior
+or mixing multiple behaviors together.
+
+Now we show how we can have another visitor, an expression printer.
+
 [[[
 Object subclass: #EPrinterVisitor
 	instanceVariableNames: ''
@@ -610,29 +616,13 @@ Object subclass: #EPrinterVisitor
 	category: 'Expressions-Model'
 ]]]
 
+We define
+
 [[[
 EPrinterVisitor >> visitConstant: aConstant
 	^ aConstant value asString
 ]]]
 
-
-[[[
-EPrinterVisitor >> visitMutiplication: aMultiplication
-
-	| left right |
-	left := aMultiplication left accept: self.
-	right := aMultiplication right accept: self.
-	^ '(', left , ' * ', right, ')'
-]]]
-
-[[[
-EPrinterVisitor >> visitMultiplication: aMultiplication
-
-	| left right |
-	left := aMultiplication left accept: self.
-	right := aMultiplication right accept: self.
-	^ '(', left , ' * ', right, ')'
-]]]
 
 [[[
 EPrinterVisitor >> visitMutiplication: aMultiplication
@@ -676,7 +666,10 @@ EPrinterVisitor >> visitVariable: aVariable
 	^ aVariable id asString
 ]]]
 
+!!! Stepping back 
 
+State of behavior is defined in visitor.
+We could abstract
 
 !!! Conclusion
 
