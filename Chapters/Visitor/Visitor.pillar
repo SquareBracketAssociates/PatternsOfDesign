@@ -1,18 +1,23 @@
 !! Understanding Visitors
 @cha:visitors
 
-In a previous chapter we built a simple mathematical expression interpreter.
+In a previous chapter, you built a simple mathematical expression interpreter.
 You were able to build an expression such as (3 + 4) * 5 and then ask the interpreter to compute its value.
-The expression trees are similar to the ones that are used to manipulate programs. For example, compilers and code refactorings as offered in Pharo and many modern IDEs are doing such manipulation with trees representing code.
-In this chapter we will introduce Visitors. A Visitor is a way to represent an action on a structure (often a tree).
-The action can be complex and its embeds its own state and behavior which would be otherwise mixed with the structure.
+The expression trees are similar to the ones that are used to manipulate programs. 
+For example, compilers and code refactorings as offered in Pharo and many modern IDEs are doing such manipulation with trees representing code (often called Abstract Syntax Trees).
+In this chapter we will introduce Visitors.
+A Visitor is a way to represent an action on a structure (often a tree).
+The action can be complex. 
+What is nice about a visitor is that it embeds its own state and behavior which would be otherwise mixed with the structure.
+In addition we can have multiple visitors visiting the same structure without mixing their concerns. 
 
-We will build two simple visitors that evaluate and print an expression.
+You will build two simple visitors that evaluate and print an expression.
 Let us start with the previous situation.
 
 !!! Existing situation: expression trees
 
-*@fig:ExpressionWithEvaluateWith* shows the simple hierarchy of expressions that we developed in a previous chapter.
+Figure *@fig:ExpressionWithEvaluateWith* shows the simple hierarchy of expressions that we developed in a previous chapter.
+We basically have the different possible parts of an expression (variable, addition, value...) represented by their own node.
 
 +A simple hierarchy of expressions.>file://figures/ExpressionsHierarchyFinal.pdf|width=70|label=fig:ExpressionWithEvaluateWith+
 
