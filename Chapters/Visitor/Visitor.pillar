@@ -22,10 +22,51 @@ We basically have the different possible parts of an expression (variable, addit
 +A simple hierarchy of expressions.>file://figures/ExpressionsHierarchyFinal.pdf|width=70|label=fig:ExpressionWithEvaluateWith+
 
 
-!!! Introducing an Evaluating Visitor
-To start we will express the evaluation of an expression but using a visitor, instead of doing it recursively as before. 
+!!! Visitor key principle
 
-We start by adding a method in the Expression class so that any expression can ''welcome'' a visitor and tells it how 
+The previous solution is using a simple recursive process to compute the value of an expression. 
+Now we will define the evaluation using a visitor. 
+
+The key principle about visitor is the following one: a visitor declares to a structure that it wants to visit it (i.e., apply a treatment to it)
+and the structure then replies by indicating to the visitor how this visitor should visit it. 
+This interaction is a double dispatch: it means that given a visitor and a structure the correct method will be executed
+without having to explicitly test the class of the structure.
+
+You do not have to deeply understanding this now.
+This interaction will emerge. 
+
+Here is a typical sketch: The class ==Constant== defines the method ==accept:== to say to the visitor that it should visit the expression using the message ==visitConstant:==.
+
+[[[
+EConstant >> accept: aVisitor
+  ^ aVisitor visitConstant: self
+]]]
+
+The visitor defines the specific action that he will perform:
+
+[[[
+EEvaluatorVisitor >> visitConstant: aConstant
+  ^ aConstant value
+]]]
+
+Here is how the interaction starts: We ask the structure to accept (tell the visitor) visitor. 
+
+[[[
+| constant |
+constant := EConstant value: 5.
+constant accept: EEvaluatorVisitor new. 
+]]]
+
+
+
+
+
+A structure, here a constant tells the visitor via the method ==accept:== that 
+the visitor should 
+
+
+!!! Introducing an Evaluating Visitor
+We start by adding a method in the ==Expression== class so that any expression can ''welcome'' a visitor and tells it how 
 to react.
 We add the method ==accept:== as follows: 
 
