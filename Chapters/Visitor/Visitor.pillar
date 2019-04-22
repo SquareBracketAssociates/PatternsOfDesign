@@ -49,7 +49,7 @@ EEvaluatorVisitor >> visitConstant: aConstant
   ^ aConstant value
 ]]]
 
-Here is how the interaction starts: We ask the structure to accept (tell the visitor) visitor. 
+Here is how the interaction starts: We ask the structure to accept a visitor.
 
 [[[
 | constant |
@@ -58,12 +58,7 @@ constant accept: EEvaluatorVisitor new.
 ]]]
 
 
-
-
-
-A structure, here a constant tells the visitor via the method ==accept:== that 
-the visitor should 
-
++Visitor principle.>file://figures/ExpressionsVisitorPrinciple.pdf|width=70|label=fig:ExpressionsVisitorPrinciple+
 
 !!! Introducing an Evaluating Visitor
 We start by adding a method in the ==Expression== class so that any expression can ''welcome'' a visitor and tells it how 
@@ -107,7 +102,7 @@ EEvaluatorVisitor >> visitConstant: aConstant
 	^ aConstant value
 ]]]
 
-itunes
+
 !!!! Adding a test class
 To make sure that we control what we are doing, we add a test class.
 
