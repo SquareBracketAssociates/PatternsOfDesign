@@ -2,40 +2,48 @@
 @cha:visitors
 
 In a previous chapter, you built a simple mathematical expression interpreter.
-You were able to build an expression such as (3 + 4) * 5 and then ask the interpreter to compute its value.
-The expression trees are similar to the ones that are used to manipulate programs. 
-For example, compilers and code refactorings as offered in Pharo and many modern IDEs are doing such manipulation with trees representing code (often called Abstract Syntax Trees).
+You were able to build an expression such as ==(3 + 4) * 5== and then ask the interpreter to compute its value.
 In this chapter we will introduce Visitors.
 A Visitor is a way to represent an action on a structure (often a tree).
-The action can be complex. 
-What is nice about a visitor is that it embeds its own state and behavior which would be otherwise mixed with the structure.
+The action can be complex and need its own specific state.
+What is nice about a visitor is that it embeds its own state and behavior which would be otherwise mixed with the ones of the structure.
 In addition we can have multiple visitors visiting the same structure without mixing their concerns. 
 
++A simple hierarchy of expressions.>file://figures/ExpressionsHierarchyFinal.pdf|width=50|label=fig:ExpressionWithEvaluateWith+
+
 You will build two simple visitors that evaluate and print an expression.
+
 Let us start with the previous situation.
 
 !!! Existing situation: expression trees
 
 Figure *@fig:ExpressionWithEvaluateWith* shows the simple hierarchy of expressions that we developed in a previous chapter.
 We basically have the different possible parts of an expression (variable, addition, value...) represented by their own node.
+Each node holds some state and in addition specifies how it computes its value. 
+This is often done by a recursive call sending message ==evaluateWith:== to subexpressions.
 
-+A simple hierarchy of expressions.>file://figures/ExpressionsHierarchyFinal.pdf|width=70|label=fig:ExpressionWithEvaluateWith+
+Note that expression trees are similar to the ones that are used to manipulate programs. 
+For example, compilers and code refactorings as offered in Pharo and many modern IDEs are doing such manipulation with trees representing code (often called Abstract Syntax Trees).
 
+In the rest of this chapter we will introduce step by step a visitor and we will incrementally replace the recursive calls by calls to the a visitor. 
+Doing so we will make sure that all the 
 
-!!! Visitor key principle
+!!! Visitor's key principle
 
 The previous solution is using a simple recursive process to compute the value of an expression. 
 Now we will define the evaluation using a visitor. 
 
 The key principle about visitor is the following one: a visitor declares to a structure that it wants to visit it (i.e., apply a treatment to it)
-and the structure then replies by indicating to the visitor how this visitor should visit it. 
-This interaction is a double dispatch: it means that given a visitor and a structure the correct method will be executed
-without having to explicitly test the class of the structure.
+and then the structure replies by indicating to the visitor how this visitor should visit it. 
+This interaction is a double dispatch: 
+it means that given a visitor and a structure, the correct method will be executed without having to explicitly test the class of the structure.
 
 You do not have to deeply understanding this now.
-This interaction will emerge. 
+This interaction will emerge from the exercise.
 
-Here is a typical sketch: The class ==Constant== defines the method ==accept:== to say to the visitor that it should visit the expression using the message ==visitConstant:==.
++Visitor principle.>file://figures/ExpressionsVisitorPrinciple.pdf|width=70|label=fig:ExpressionsVisitorPrinciple+
+
+Here is a typical illustration: The class ==Constant== defines the method ==accept:== to say to the visitor that it should visit the expression using the message ==visitConstant:==.
 
 [[[
 EConstant >> accept: aVisitor
@@ -58,12 +66,15 @@ constant accept: EEvaluatorVisitor new.
 ]]]
 
 
-+Visitor principle.>file://figures/ExpressionsVisitorPrinciple.pdf|width=70|label=fig:ExpressionsVisitorPrinciple+
+
+
+Let us step by step implement an evaluating visitor.
 
 !!! Introducing an Evaluating Visitor
-We start by adding a method in the ==Expression== class so that any expression can ''welcome'' a visitor and tells it how 
+We start by adding an abstract method ==accept:== in the ==Expression== class to document that any expression can ''welcome'' a visitor and tells it how 
 to react.
-We add the method ==accept:== as follows: 
+
+Here is the definition of the the abstract method ==accept:==:
 
 [[[
 EExpression >> accept: aVisitor
@@ -71,7 +82,7 @@ EExpression >> accept: aVisitor
 	self subclassResponsibility
 ]]]
 
-Now we take a concrete case and start with constant.
+Now we take a concrete node expression: we start with constant expressions.
 When the visitor visit a constant, the constant tells the visitor that it should visit the constant as a constant. 
 This is literaly what the following method is doing.
 
@@ -104,6 +115,7 @@ EEvaluatorVisitor >> visitConstant: aConstant
 
 
 !!!! Adding a test class
+
 To make sure that we control what we are doing, we add a test class.
 
 [[[
@@ -125,7 +137,8 @@ EEvaluatorVisitorTest >> testVisitConstantReturnsConstantValue
 	self assert: result equals: 5
 ]]]
 
-We can rewrite the old evaluateWith: method to invoke the visitor.
+We can rewrite the old method ==evaluateWith:== method to invoke the visitor.
+
 [[[
 EConstant >> evaluateWith: anObject
 	
@@ -133,10 +146,11 @@ EConstant >> evaluateWith: anObject
 ]]]
 
 You can execute your new and old tests and both should work.
+Note that once the visitor is in place, we will remove this method and only define it once in the superclass. 
 
 !!! Now handling addition
 We will do the same with adddition.
-First we define a new ==accept:== method on the Addition class to invoke the visitor. 
+First we define a new ==accept:== method on the ==Addition== class to say to the visitor which method it should execute on the structure.
 
 [[[
 EAddition >> accept: aVisitor
@@ -144,11 +158,12 @@ EAddition >> accept: aVisitor
 	^ aVisitor visitAddition: self
 ]]]
 
-Notice again that the visitor announces itself and that the addition tells him that it should be treated this time as an addition.
+Notice again that the visitor announces itself and that the addition tells it that it should be treated this time as an addition.
 This pattern is key to the visitor logic.
 You will see that we will repeat again and again.
 Each expression will declare how it should considered by the visitor. 
 
+!!!! Adding a new test
 Now we can define a new test to validate that the execution of an addition is correct.
 
 [[[
@@ -160,13 +175,6 @@ EEvaluatorVisitorTest >> testVisitAdditionReturnsAdditionResult
 		right: (EConstant value: -2).
 	result := expression accept: EEvaluatorVisitor new.	
 	self assert: result equals: 5
-]]]
-
-We start to define an abstract method ==visitAddition:==.
-
-[[[
-EEvaluatorVisitor >> visitAddition: anEAddition
-	self shouldBeImplemented
 ]]]
 
 We create the accessors ==left== and ==right==.
@@ -181,6 +189,7 @@ EBinaryExpression >> right
 	^ right
 ]]]
 
+!!!! Defining visitAddition:
 Now we are ready to define the method ==visitAddition:== as follows:
 
 [[[
@@ -188,20 +197,31 @@ EEvaluatorVisitor >> visitAddition: anEAddition
 	
 	| evaluationOfLeft evaluationOfRight |
 	evaluationOfLeft := anEAddition left accept: self.
-	evaluationOfRight := anEAddition left accept: self.
+	evaluationOfRight := anEAddition right accept: self.
 	^ evaluationOfLeft + evaluationOfRight
 ]]]
 
-We also define the method ==evaluateWith:==.
+Let us study a bit the method ==visitAddition:==. 
+What you see is that each subexpression left and right is now using the visitor. 
+And once each value is known the visitor will perform the addition.
+
+
+
+We also redefine the method ==evaluateWith:== to use the visitor. 
+As you recognize it, it is the same as in the class ==Constant==. 
+We will remove it later. 
 
 [[[
 EAddition >> evaluateWith: anObject
-	^ (right evaluateWith: anObject) + (left evaluateWith: anObject)
+	^ self accept: EEvaluatorVisitor new
 ]]]
+
+Again all your new and old tests should pass. 
 
 !!! Supporting negation
 
-We will now focus on the negation.
+We will focus on the negation.
+Again we start by defining a test method. 
 
 [[[
 EEvaluatorVisitorTest >> testVisitNegationReturnsNegatedConstant
@@ -220,11 +240,6 @@ ENegation >> accept: aVisitor
 	^ aVisitor visitNegation: self
 ]]]
 
-[[[
-EEvaluatorVisitor >> visitNegation: anENegation
-	self shouldBeImplemented.
-]]]
-
 We add the ==expression== accessor.
 
 [[[
@@ -232,6 +247,7 @@ ENegation >> expression
 	^ expression
 ]]]
 
+!!!! Defining visitNegation:
 We define the ==visitNegation:== as follows: 
 
 [[[
@@ -242,51 +258,46 @@ EEvaluatorVisitor >> visitNegation: anENegation
 	^ aNumber negated
 ]]]
 
-We can define the ==evaluateWith:== method on a negation to invoke the visitor.
+What you see is that again the method ==visitNegation:== is invoking the visitor on a subexpression, here the negated expression.
+
+!!!! Again redefining evaluateWith:
+
+We  redefine the ==evaluateWith:== method on a negation to invoke the visitor.
 
 [[[
 ENegation >> evaluateWith: anObject
 	^ self accept: EEvaluatorVisitor new
 ]]]
 
-We can also redefine the method ==evaluateWith:== in a more recursive way.
-
-[[[
-ENegation >> evaluateWith: anObject
-	^ (expression evaluateWith: anObject) negated
-]]]
 
 
 !!! Supporting Multiplication
 
+You start to get it and we will do exactly the same for multiplication. 
+
+!!!! Adding a test
 [[[
 EEvaluatorVisitorTest >> testVisitMultiplicationReturnsMultiplicationResult
 
 	| expression result |
 	expression := EMultiplication
 		left: (EConstant value: 7)
-		right: (EConstant value: -2).
-	
+		right: (EConstant value: -2).	
 	result := expression accept: EEvaluatorVisitor new.
-	
 	self assert: result equals: -14
 ]]]
 
-[[[
-EMultiplication >> accept: anEEvaluatorVisitor 
-	self shouldBeImplemented.
-]]]
+!!!! Defining the accept: method
 
+We define the ==accept:== method on the ==Multiplication== class.
 [[[
 EMultiplication >> accept: aVisitor
 	
 	^ aVisitor visitMultiplication: self
 ]]]
 
-[[[
-EEvaluatorVisitor >> visitMultiplication: anEMultiplication 
-	self shouldBeImplemented.
-]]]
+!!!! Defining the visitMultiplication
+
 
 [[[
 EEvaluatorVisitor >> visitMultiplication: anEMultiplication 
@@ -300,32 +311,9 @@ EEvaluatorVisitor >> visitMultiplication: anEMultiplication
 
 !!! Supporting Division
 
-[[[
-EDivision >> numerator
-	^ numerator
-]]]
+For division we do the same. 
 
-[[[
-EDivision >> denominator
-	^ denominator
-]]]
-
-[[[
-EDivision >> accept: aVisitor
-
-	^ aVisitor visitDivision: self
-]]]
-
-[[[
-EEvaluatorVisitor >> visitDivision: aDivision 
-
-	| denom numerator |
-	denom := aDivision denominator accept: self.
-	denom isZero
-		ifTrue: [ EZeroDenominator signal ].
-	numerator := aDivision numerator accept: self. 
-	^ numerator / denom
-]]]
+!!!! First two tests
 
 [[[
 EEvaluatorVisitorTest >> testVisitDivisionReturnsDivisionResult
@@ -337,16 +325,6 @@ EEvaluatorVisitorTest >> testVisitDivisionReturnsDivisionResult
 	result := expression accept: EEvaluatorVisitor new.
 	self assert: result equals: 2
 ]]]
-
-[[[
-EDivision class >> numerator: aNumeratorExpression denominator: aDenominatorExpression
-
-	^ self new
-		numerator: aNumeratorExpression;
-		denominator: aDenominatorExpression;
-		yourself
-]]]
-
 
 [[[
 EEvaluatorVisitorTest >> testVisitDivisionByZeroThrowsException
@@ -373,8 +351,72 @@ EEvaluatorVisitorTest >> testVisitDivisionByZeroThrowsException
 		raise: EZeroDenominator
 ]]]
 
+!!!! Improving the creation API
+
+We introduce the class message  ==numerator:denominator:== to ease division creation.
+
+[[[
+EDivision class >> numerator: aNumeratorExpression denominator: aDenominatorExpression
+
+	^ self new
+		numerator: aNumeratorExpression;
+		denominator: aDenominatorExpression;
+		yourself
+]]]
+
+
+We define accessors so that the visitor can access to subexpression. 
+
+[[[
+EDivision >> numerator
+	^ numerator
+]]]
+
+[[[
+EDivision >> denominator
+	^ denominator
+]]]
+
+!!!! Defining accept:
+
+Then we define the method ==accept:== for divisions.
+
+[[[
+EDivision >> accept: aVisitor
+
+	^ aVisitor visitDivision: self
+]]]
+
+!!!! Defining the visitDivision: 
+
+We define the ==visitDivision:== method as follows. It is similar to others. In addition here we prevent division by Zero and raise an exception instead. 
+
+[[[
+EEvaluatorVisitor >> visitDivision: aDivision 
+
+	| denom numerator |
+	denom := aDivision denominator accept: self.
+	denom isZero
+		ifTrue: [ EZeroDenominator signal ].
+	numerator := aDivision numerator accept: self. 
+	^ numerator / denom
+]]]
+
+
+!!! Moving up evaluateWith:
+
+Since we get bored to always redefine the method ==evaluateWith:== we define it in the superclass, the class ==Expression== and we
+remove it from all the subclasses except ==Variable== since we will still have to transform it. 
+
+[[[
+EExpression >> evaluateWith: anObject
+
+	^ self accept: EEvaluatorVisitor new
+]]]
 
 !!! Supporting variable
+
+to be done!!!
 
 [[[
 EVariable >> accept: aVisitor
@@ -420,14 +462,6 @@ EVariable class >> id: anId
 ]]]
 
 [[[
-EVariable class >> id: anId
-
-	^ self new
-		id: anId;
-		yourself
-]]]
-
-[[[
 EEvaluatorVisitorTest >> testVisitVariableReturnsVariableValue
 	| expression result visitor |
 	expression := (EVariable id: #answerToTheQuestion) negated.
@@ -436,17 +470,6 @@ EEvaluatorVisitorTest >> testVisitVariableReturnsVariableValue
 	self assert: result equals: 42
 ]]]
 
-[[[
-EEvaluatorVisitorTest >> testVisitVariableReturnsVariableValue
-	| expression result visitor |
-	expression := (EVariable id: #answerToTheQuestion) negated.
-
-	visitor := EEvaluatorVisitor new.
-	visitor at: #answerToTheQuestion put: 42.
-	
-	result := expression accept: visitor.
-	self assert: result equals: 42
-]]]
 
 [[[
 EEvaluatorVisitor >> at: anId put: aValue
@@ -471,81 +494,8 @@ EEvaluatorVisitorTest >> testVisitVariableReturnsVariableValue
 	self assert: result equals: 42
 ]]]
 
-[[[
-EDivision >> evaluateWith: anObject
-	^ self accept: EEvaluatorVisitor new
-]]]
 
-[[[
-EMultiplication >> evaluateWith: anObject
-	
-	^ self accept: EEvaluatorVisitor new
-]]]
 
-[[[
-EAddition >> evaluateWith: anObject	
-	^ self accept: EEvaluatorVisitor new
-]]]
-
-[[[
-EAddition >> evaluateWith: anObject
-
-	| visitor |
-	visitor := EEvaluatorVisitor new.
-	visitor bindings: anObject.
-	^ self accept: visitor.
-]]]
-
-[[[
-EConstant >> evaluateWith: anObject
-
-	| visitor |
-	visitor := EEvaluatorVisitor new.
-	visitor bindings: anObject.
-	^ self accept: visitor.
-]]]
-
-[[[
-EDivision >> evaluateWith: anObject
-
-	| visitor |
-	visitor := EEvaluatorVisitor new.
-	visitor bindings: anObject.
-	^ self accept: visitor.
-]]]
-
-[[[
-EMultiplication >> evaluateWith: anObject
-
-	| visitor |
-	visitor := EEvaluatorVisitor new.
-	visitor bindings: anObject.
-	^ self accept: visitor.
-]]]
-
-[[[
-ENegation >> evaluateWith: anObject
-
-	| visitor |
-	visitor := EEvaluatorVisitor new.
-	visitor bindings: anObject.
-	^ self accept: visitor.
-]]]
-
-[[[
-EVariable >> evaluateWith: anObject
-
-	| visitor |
-	visitor := EEvaluatorVisitor new.
-	visitor bindings: anObject.
-	^ self accept: visitor.
-]]]
-
-[[[
-EEvaluatorVisitor >> bindings: aDictionary
-
-	bindings := aDictionary
-]]]
 
 
 [[[
@@ -557,8 +507,18 @@ EExpression >> evaluateWith: anObject
 	^ self accept: visitor.
 ]]]
 
+
 [[[
-EVariable >> evaluateWith: anObject
+EEvaluatorVisitor >> bindings: aDictionary
+
+	bindings := aDictionary
+]]]
+
+
+!!! Redefine evaluateWith:
+
+[[[
+EExpression >> evaluateWith: anObject
 
 	| visitor |
 	visitor := EEvaluatorVisitor new.
@@ -566,79 +526,7 @@ EVariable >> evaluateWith: anObject
 	^ self accept: visitor.
 ]]]
 
-
-[[[
-EConstant >> evaluateWith: anObject
-
-	| visitor |
-	visitor := EEvaluatorVisitor new.
-	visitor bindings: anObject.
-	^ self accept: visitor.
-]]]
-
-
-[[[
-EDivision >> evaluateWith: anObject
-
-	| visitor |
-	visitor := EEvaluatorVisitor new.
-	visitor bindings: anObject.
-	^ self accept: visitor.
-]]]
-
-
-[[[
-ENegation >> evaluateWith: anObject
-
-	| visitor |
-	visitor := EEvaluatorVisitor new.
-	visitor bindings: anObject.
-	^ self accept: visitor.
-]]]
-
-
-[[[
-EAddition >> evaluateWith: anObject
-
-	| visitor |
-	visitor := EEvaluatorVisitor new.
-	visitor bindings: anObject.
-	^ self accept: visitor.
-]]]
-
-
-[[[
-EMultiplication >> evaluateWith: anObject
-
-	| visitor |
-	visitor := EEvaluatorVisitor new.
-	visitor bindings: anObject.
-	^ self accept: visitor.
-]]]
-
-
-[[[
-EEvaluatorVisitorTest >> testVisitDivisionReturnsDivisionResult
-
-	| expression result |
-	expression := EDivision
-		numerator: (EConstant value: 6)
-		denominator: (EConstant value: 3).
-	
-	result := expression accept: EEvaluatorVisitor new.
-	
-	self assert: result equals: 2
-]]]
-
-
-[[[
-EEvaluatorVisitor >> visitMultiplication: anEMultiplication 
-
-	| evaluationOfLeft evaluationOfRight |
-	evaluationOfLeft := anEMultiplication left accept: self.
-	evaluationOfRight := anEMultiplication right accept: self.
-	^ evaluationOfLeft * evaluationOfRight
-]]]
+We remove ==evaluateWith:== from class ==Variable==
 
 
 !!! A new visitor
