@@ -414,6 +414,8 @@ EExpression >> evaluateWith: anObject
 	^ self accept: EEvaluatorVisitor new
 ]]]
 
++Visitor.>file://figures/ExpressionsVisitorBeforeBindings.pdf|width=70|label=fig:ExpressionsVisitorBeforeBindings+
+
 !!! Supporting variable
 
 to be done!!!
