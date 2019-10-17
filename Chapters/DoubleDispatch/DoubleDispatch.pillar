@@ -95,10 +95,10 @@ DieTest >> testAddingADieAndHandle
 DieHandleTest >> testAddingAnHandleWithADie
 	| handle res |
 	handle := DieHandle new
-		addDie: (Die faces: 6);
-		addDie: (Die faces: 10);
+		addDie: (Die withFaces: 6);
+		addDie: (Die withFaces: 10);
 		yourself.
-	res := handle + (Die faces: 20).
+	res := handle + (Die withFaces: 20).
 	self assert: res diceNumber equals: 3
 ]]]
 
@@ -168,7 +168,7 @@ Now we want to handle the fact that we can add a die or a die handle to the rece
 [[[
 DieTest >> testAddingADieAndHandle
 	| hd |
-	hd := (Die faces: 6)
+	hd := (Die withFaces: 6)
 		+
 		(DieHandle new
 			addDie: 6;
@@ -290,7 +290,7 @@ DieHandleTest >> testAddingAnHandleWithADie
 		addDie: (Die faces: 6);
 		addDie: (Die faces: 10);
 		yourself.
-	res := handle + (Die faces: 20).
+	res := handle + (Die withFaces: 20).
 	self assert: res diceNumber equals: 3
 ]]]
 
