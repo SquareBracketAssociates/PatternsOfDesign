@@ -112,7 +112,7 @@ The first solution is to explicitly type check the argument to decide what to do
 [[[
 DieHandle >> + aDieOrADieHandle
 
-	^ (aDieOrADieHandle class = DieHandle) 
+	^ (aDieOrADieHandle class = DieHandle)
 		ifTrue: [ | handle |
 					handle := self class new.
 					self dice do: [ :each | handle addDie: each ].
@@ -121,7 +121,7 @@ DieHandle >> + aDieOrADieHandle
 		ifFalse: [ | handle |
 					handle := self class new.
 					self dice do: [ :each | handle addDie: each ].
-					handle addDie: aDie.
+					handle addDie: aDieOrADieHandle.
 					handle  ]
 ]]]
 
