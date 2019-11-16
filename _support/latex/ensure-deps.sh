@@ -9,6 +9,7 @@ xargs tlmgr install <<DEPS
     footmisc
     gentium-tug
     graphics
+    hyphen-english
     import
     listings
     luatexbase
