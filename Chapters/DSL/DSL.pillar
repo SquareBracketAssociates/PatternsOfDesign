@@ -359,6 +359,34 @@ col add: (DieHandle new addDie: (Die withFaces: 4); yourself).
 !!!! About composition
 Composite objects such as document objects (a book is composed of chapters, a chapter is composed of sections, a section is composed of paragraphs) often have a more complex composition relationship than the composition between a die and a die handle. Often the composition is recursive in the sense that an element can be the whole: for example, a diagram can be composed of lines, circles, and other diagrams. We will see an example of such composition in the Expression Chapter *@cha:expressions*.
 
+!!! Handle's addition
+Now what is missing is that possibility to add several handles together to form a new one. Of course let's write a test first to be clear on what we mean.
+
+[[[
+DieHandleTest >> testSumOfHandles
+	| hd1 hd2 hd3 |
+	hd1 := DieHandle new addDie: (Die withFaces: 20); addDie: (Die withFaces: 20); yourself.
+	hd2 := DieHandle new addDie: (Die withFaces: 10); addDie: (Die withFaces: 10); yourself.
+	hd3 := hd1 + hd2.
+	self assert: handle diceNumber equals: 4.
+]]]
+
+
+We will define a method ==\+== on the ==DieHandle== class. In other languages this is often not possible or is based on operator overloading. In Pharo ==\+== is just a message as any other, therefore we can define it on the classes we want.
+
+Now we should ask ourself what is the semantics of adding two handles. Should we modify the receiver of the expression or create a new one. We preferred a more functional style and chose to create a third one. 
+
+The method ==\+== creates a new handle then adds the dice of the receiver to it, and then one of the handles passed as argument to the message. Finally we return it. 
+
+[[[
+DieHandle >> + aDieHandle
+	... Your solution ... 
+]]]
+
+Now we want to be able to execute the method ==(2 D20 + 1 D6) roll== nicely and start playing role playing games, of course.
+So let us see that.
+
+
 !!! Role playing syntax
 
 Now we are ready to offer a syntax following practice of role playing game, i.e., using ==2 D20== to create a handle of two dice with 20 faces each.  For this purpose we will define class extensions: we will define methods in the class ==Integer== but these methods will be only available when the package Dice will be loaded. 
@@ -420,34 +448,16 @@ Integer >> D20
 	^ self D: 20
 ]]]
 
-We have now a compact form to create dice and we are ready for the last part: the addition of handles. 
-
-!!! Handles addition
-Now what is missing is that possibility to add several handles as follows: ==2 D20 + 3 D10==. Of course let's write a test first to be clear on what we mean.
+We obtain a compact form to create dice and we are ready for the last part: the addition of handles.
+We can write a new test named ==testSumming==.
 
 [[[
-DieHandleTest >> testSumming
+DiceHandleTest >> testSumming
+
 	| handle |
 	handle := 2 D20 + 3 D10.
 	self assert: handle diceNumber equals: 5.
 ]]]
-
-We will define a method ==\+== on the ==DieHandle== class. In other languages this is often not possible or is based on operator overloading. In Pharo ==\+== is just a message as any other, therefore we can define it on the classes we want.
-
-Now we should ask ourself what is the semantics of adding two handles. Should we modify the receiver of the expression or create a new one. We preferred a more functional style and chose to create a third one. 
-
-The method ==\+== creates a new handle then adds the dice of the receiver to it, and then one of the handles passed as argument to the message. Finally we return it. 
-
-[[[
-DieHandle >> + aDieHandle
-	... Your solution ... 
-]]]
-
-
-
-Now we can execute the method ==(2 D20 + 1 D6) roll== nicely and start playing role playing games, of course.
-
-
 
 !!! Conclusion
 
