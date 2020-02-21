@@ -945,7 +945,7 @@ EVariable >> id: aSymbol
 
 [[[
 EVariable >> printOn: aStream
-	aStream nexPutAll: id asString
+	aStream nextPutAll: id asString
 ]]]
 What we see is that we need to be able to pass bindings (a binding is a pair key, value) when evaluating a variable. The value of a variable is the value of the binding whose key is the name of the variable. 
 
