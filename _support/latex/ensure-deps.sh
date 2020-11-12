@@ -10,7 +10,6 @@ xargs tlmgr install <<DEPS
     footmisc
     gentium-tug
     graphics
-    hyphen-english
     ifetex
     import
     listings
@@ -22,10 +21,12 @@ xargs tlmgr install <<DEPS
     opensans
     pgf
     polyglossia
+    slantsc
     tcolorbox
     tools
     trimspaces
     ulem
     varwidth
     xcolor
+    xtab
 DEPS
