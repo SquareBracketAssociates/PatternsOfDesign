@@ -19,8 +19,8 @@ The following tests show these two behaviors: First the dice handle creation and
 DieHandleTest >> testCreationAdding
 	| handle |
 	handle := DieHandle new
-		addDice: (Dice faces: 6);
-		addDice: (Dice faces: 10);
+		addDie: (Die faces: 6);
+		addDie: (Die faces: 10);
 		yourself.
 	self assert: handle diceNumber = 2
 ]]]
@@ -273,7 +273,7 @@ Die >> sumWithHandle: aDieHandle
 	| handle |
 	handle := DieHandle new.
 	aDieHandle dice do: [ :each | handle addDie: each ].
-	handle addDie: self
+	handle addDie: self.
 	^ handle
 ]]]
 
