@@ -511,7 +511,7 @@ EEvaluatorVisitor >> at: anId put: aValue
 ]]]
 
 
-We define a class method ==id:= to name a variable.
+We define a class method ==id:== to name a variable.
 [[[
 EVariable class >> id: anId
 
@@ -550,6 +550,7 @@ EEvaluatorVisitor >> visitVariable: aVariable
 
 
 !!! Redefine evaluateWith:
+We modify the method ==evaluateWith:== to make sure that the initial bindings are stored in the visitor.
 
 [[[
 EExpression >> evaluateWith: anEnvironment
@@ -567,8 +568,6 @@ EEvaluatorVisitor >> bindings: aDictionary
 	bindings := aDictionary
 ]]]
 
-
-We remove ==evaluateWith:== from class ==Variable==
 
 
 !!! A new visitor
