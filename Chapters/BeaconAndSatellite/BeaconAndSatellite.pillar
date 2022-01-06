@@ -68,14 +68,18 @@ Satelitte >> position: aPoint
 
 [[[
 Satelitte >> notify
-	observers do: [ :aBeacon | aBeacon salelittePositionChanged: self ]
+	observers do: [ :aBeacon | aBeacon satelittePositionChanged: self ]
 ]]]
 
 !!! V1 Implementation
 
 ???
 
-
+[[[
+Beacon >> satelittePositionChanged: aSat
+	(aSat position isBetween: self start and: self end)
+	self emitData: self data to: aSat
+]]]
 
 !!! V2: Analysis
 
@@ -146,7 +150,7 @@ SBProtocolChanged >> fireOn: anObserver
 !!!! V2 analysis
 
 Advantages
-- we reuse the same mechanism for different kind of observable properties.
+- we reuse the same mechanism for different kinds of observable properties.
 
 Drawbacks
 - One event means that the message is also hardcoded. There is tight dependencies between  the event type and the kind of behavior that is available on the observer side. 

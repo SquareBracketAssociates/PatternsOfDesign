@@ -1,6 +1,3 @@
-
-
-
 ${inputFile:path=Chapters/Introduction/Introduction.pillar}$
 
 ! Getting started
@@ -9,17 +6,15 @@ ${inputFile:path=Chapters/DSL/DSL.pillar}$
 ${inputFile:path=Chapters/Expression/Expression.pillar}$
 
 ! Power of Messages
+%DSL DD
 ${inputFile:path=Chapters/DoubleDispatch/DoubleDispatch.pillar}$
+
 ${inputFile:path=Chapters/PaperStoneScissor/PaperStoneScissor.pillar}$
 
 ! Playing with Visitors
 Here I should take the slides flow from the design mooc lectures. 
 
 ${inputFile:path=Chapters/Visitor/Visitor.pillar}$
-
-
-
-
 
 
 !! Playing with Interpreters
@@ -29,37 +24,5 @@ Visitor then after I should make sure that we only return expressions
 of the same domain and with a stack.
 
 
-!!! Using the Pharo execution stack
 
-[[[
-EEvaluator >> visitMultiplication: aMultiplication
-	^ (EConstant new
-		value: (self evaluate: aMultiplication left) * 
-					(self evaluate: aMultiplication right)  
-]]]
-
-!!! With an explicit interpretation  stack
-[[[
-EEvaluator >> visitMultiplication: aMultiplication
-	self evaluate: aMultiplication left.
-	self evaluate: aMultiplication right.
-	self push: (EConstant new
-					value: self pop value * self pop value)  
-]]]
-
-!! Beacon
-
-!! Parsing alain?
-
-!!  Uno 
-
-*https://github.com/cdlm/kata-uno*
-
-!! Ideas
-Lire
-- Implement sokoban
-
-- Ants
-- Parser
-- Implementation turtle
 

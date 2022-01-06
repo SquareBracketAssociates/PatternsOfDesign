@@ -310,7 +310,7 @@ EEAdditionTest >> testNegated
 
 [[[
 EAddition >> negated
-	Your code
+	... Your code ...
 ]]]
 
 
