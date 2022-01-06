@@ -79,6 +79,7 @@ Here is the definition of the the abstract method ==accept:==:
 
 [[[
 EExpression >> accept: aVisitor
+
 	self subclassResponsibility
 ]]]
 
@@ -88,6 +89,7 @@ This is literaly what the following method is doing.
 
 [[[
 EConstant >> accept: aVisitor
+
 	^ aVisitor visitConstant: self
 ]]]
 
@@ -107,6 +109,7 @@ We define the ==visitConstant:== as follows:
 
 [[[
 EEvaluatorVisitor >> visitConstant: aConstant
+
 	^ aConstant value
 ]]]
 
@@ -126,6 +129,7 @@ We are ready to write our first test
 
 [[[
 EEvaluatorVisitorTest >> testVisitConstantReturnsConstantValue
+
 	| constant result |
 	constant := EConstant value: 5.
 	result := constant accept: EEvaluatorVisitor new.
@@ -136,6 +140,7 @@ We can rewrite the old method ==evaluateWith:== method to invoke the visitor.
 
 [[[
 EConstant >> evaluateWith: anObject
+	
 	^ self accept: EEvaluatorVisitor new
 ]]]
 
@@ -169,6 +174,7 @@ Now we can define a new test to validate that the execution of an addition is co
 
 [[[
 EEvaluatorVisitorTest >> testVisitAdditionReturnsAdditionResult
+
 	| expression result |
 	expression := EAddition
 		left: (EConstant value: 7)
@@ -194,7 +200,6 @@ Now we are ready to define the method ==visitAddition:== so that it adds the val
 
 [[[
 EEvaluatorVisitor >> visitAddition: anEAddition
-
 	... Your code ...
 ]]]
 
@@ -228,6 +233,7 @@ Again we start by defining a test method.
 
 [[[
 EEvaluatorVisitorTest >> testVisitNegationReturnsNegatedConstant
+
 	| expression result |
 	expression := (EConstant value: 7) negated.
 	result := expression accept: EEvaluatorVisitor new.
@@ -239,7 +245,6 @@ We define the ==accept:== method for the negation.
 
 [[[
 ENegation >> accept: aVisitor
-
 	... Your code ...
 ]]]
 
@@ -292,6 +297,7 @@ You start to get it and we will do exactly the same for multiplication.
 !!!! Adding a test
 [[[
 EEvaluatorVisitorTest >> testVisitMultiplicationReturnsMultiplicationResult
+
 	| expression result |
 	expression := EMultiplication
 		left: (EConstant value: 7)
@@ -349,6 +355,7 @@ You should start to get the pattern.
 
 [[[
 EEvaluatorVisitorTest >> testVisitDivisionReturnsDivisionResult
+
 	| expression result |
 	expression := EDivision
 		numerator: (EConstant value: 6)
@@ -359,6 +366,7 @@ EEvaluatorVisitorTest >> testVisitDivisionReturnsDivisionResult
 
 [[[
 EEvaluatorVisitorTest >> testVisitDivisionByZeroThrowsException
+
 	| expression result |
 	expression := EDivision
 		numerator: (EConstant value: 6)
@@ -370,6 +378,7 @@ EEvaluatorVisitorTest >> testVisitDivisionByZeroThrowsException
 
 [[[
 EEvaluatorVisitorTest >> testVisitDivisionByZeroThrowsException
+
 	| expression  |
 	expression := EDivision
 		numerator: (EConstant value: 6)
@@ -386,6 +395,7 @@ We introduce the class message  ==numerator:denominator:== to ease division crea
 
 [[[
 EDivision class >> numerator: aNumeratorExpression denominator: aDenominatorExpression
+
 	^ self new
 		numerator: aNumeratorExpression;
 		denominator: aDenominatorExpression;
@@ -411,6 +421,7 @@ Then we define the method ==accept:== for divisions.
 
 [[[
 EDivision >> accept: aVisitor
+
 	... Your code ...
 ]]]
 
@@ -448,6 +459,7 @@ Since we get bored to always redefine the method ==evaluateWith:== we define it 
 
 [[[
 EExpression >> evaluateWith: anObject
+
 	^ self accept: EEvaluatorVisitor new
 ]]]
 
@@ -487,6 +499,7 @@ Object subclass: #EEvaluatorVisitor
 We initialize this variable to a dictionary.
 [[[
 EEvaluatorVisitor >> initialize
+
 	super initialize.
 	bindings := Dictionary new
 ]]]
@@ -501,6 +514,7 @@ EEvaluatorVisitor >> at: anId put: aValue
 We define a class method ==id:= to name a variable.
 [[[
 EVariable class >> id: anId
+
 	^ self new id: anId; yourself
 ]]]
 
@@ -509,7 +523,6 @@ We have to define a method ==accept:== on the class ==EVariable==.
 
 [[[
 EVariable >> accept: aVisitor
-
 	... Your code ...
 ]]]
 
@@ -534,10 +547,9 @@ EEvaluatorVisitor >> visitVariable: aVariable
 %]]]
 
 
-!!! Redefine evaluateWith:
 
-We should redefine the method ==evaluateWith:== to be sure that the argument of message ==evaluateWith:==
-is used as bindings for the variable evalution.
+
+!!! Redefine evaluateWith:
 
 [[[
 EExpression >> evaluateWith: anEnvironment
@@ -548,23 +560,29 @@ EExpression >> evaluateWith: anEnvironment
 	^ self accept: visitor.
 ]]]
 
-We add the ==binding:== setter to be able to change the bindings of the visitor.
 
 [[[
 EEvaluatorVisitor >> bindings: aDictionary
+
 	bindings := aDictionary
 ]]]
 
+
+We remove ==evaluateWith:== from class ==Variable==
+
+
 !!! A new visitor
 
-Using a visitor is particularly interesting when we have multiple behaviors that we want to encapsulate.
+Using a visitor is particularly interesting when we have multiple behavior that we want to encapsulate.
 Such behaviors are applied on a structure without mixing the state of the structure with the state of the behavior or mixing multiple behaviors together.
 
+Now that each kind of expression is declaring in its respective methods how a visitor should visit it, 
+other visitors can be easily expressed. And this is what we will show now.
+
+!!!! Defining a new visitor
 Now we show how we can have another visitor, an expression printer.
+Let us define the following class.
 
-!!!! Defining a new class
-
-First we define a new class named ==EPrinterVisitor==.
 [[[
 Object subclass: #EPrinterVisitor
 	instanceVariableNames: ''
@@ -572,7 +590,8 @@ Object subclass: #EPrinterVisitor
 	package: 'Expressions-Model'
 ]]]
 
-Define some tests to make sure that your code will be correct.
+Define some tests to make sure that you are getting the correct results.
+We let you do it. 
 
 [[[
 TestCase subclass: #EPrinterVisitorTest
@@ -582,11 +601,9 @@ TestCase subclass: #EPrinterVisitorTest
 ]]]
 
 
+!!! Visiting methods
 
-!!!! Defining visit methods
-
-We define the various methods for each elements.
-
+We start by defining some typical visit methods as follows:
 [[[
 EPrinterVisitor >> visitConstant: aConstant
 	^ aConstant value asString
@@ -602,38 +619,27 @@ EPrinterVisitor >> visitMutiplication: aMultiplication
 	^ '(', left , ' * ', right, ')'
 ]]]
 
-Now you should be able to finish the printer.
+
+Now you should be in position to finish the implementation.
 
 [[[
 EPrinterVisitor >> visitAddition: anAddition
-
-	| left right |
-	left := anAddition left accept: self.
-	right := anAddition right accept: self.
-	^ '(', left , ' + ', right, ')'
+	... Your code ...
 ]]]
 
 [[[
 EPrinterVisitor >> visitDivision: aDivision
-
-	| left right |
-	left := aDivision left accept: self.
-	right := aDivision right accept: self.
-	^ '(', left , ' / ', right, ')'
+	... Your code ...
 ]]]
 
 [[[
 EPrinterVisitor >> visitNegation: aNegation
-
-	| subExpression |
-	subExpression := aNegation expression accept: self.
-	^ subExpression , ' negated'
+	... Your code ...
 ]]]
 
 [[[
 EPrinterVisitor >> visitVariable: aVariable
-
-	^ aVariable id asString
+	... Your code ...
 ]]]
 
 %[[[
@@ -646,33 +652,35 @@ EPrinterVisitor >> visitVariable: aVariable
 %]]]
 
 %[[[
-E%PrinterVisitor >> visitDivision: aDivision
+%EPrinterVisitor >> visitDivision: aDivision
+%
+%	| left right |
+%	left := aDivision left accept: self.
+%	right := aDivision right accept: self.
+%	^ '(', left , ' / ', right, ')'
+%]]]
 
-	| left right |
-	left := aDivision left accept: self.
-	right := aDivision right accept: self.
-	^ '(', left , ' / ', right, ')'
-]]]
+%[[[
+%EPrinterVisitor >> visitNegation: aNegation
+%
+%	| subExpression |
+%	subExpression := aNegation expression accept: self.
+%	^ subExpression , ' negated'
+%]]]
 
-[[[
-EPrinterVisitor >> visitNegation: aNegation
+%[[[
+%EPrinterVisitor >> visitVariable: aVariable
+%
+%	^ aVariable id asString
+%]]]
 
-	| subExpression |
-	subExpression := aNegation expression accept: self.
-	^ subExpression , ' negated'
-]]]
-
-[[[
-EPrinterVisitor >> visitVariable: aVariable
-
-	^ aVariable id asString
-]]]
-
-!!! Stepping back 
-
-State of behavior is defined in visitor.
-We could abstract
 
 !!! Conclusion
+In this chapter we show how you can pass from a behavior inside a class hierarchy to a separate object and how once this architecture is in place (basically the ==accept:== methods) other visitors can be easily expressed.
 
-say something :)
+The visitor pattern is a nice design. 
+It supports encapsulate behavior on complex structure. In addition it lets users develop their own functionality indepently of others. 
+
+Now you should pay attention not to over use it. It is also more suitable for systems whose domain does not change because else each time you add a kind of object in your composite (here the expression) you would have to touch each visitor.
+
+
