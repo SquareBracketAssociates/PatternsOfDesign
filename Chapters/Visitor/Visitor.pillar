@@ -4,10 +4,11 @@
 In a previous chapter, you built a simple mathematical expression interpreter.
 You were able to build an expression such as ==(3 + 4) * 5== and then ask the interpreter to compute its value.
 In this chapter we will introduce Visitors.
-A Visitor is a way to represent an action on a structure (often a tree).
+A Visitor is a way to represent an action on a structure (often a tree) as its own object.
 The action can be complex and need its own specific state.
-What is nice about a visitor is that it embeds its own state and behavior which would be otherwise mixed with the ones of the structure.
+What is nice about a visitor is that it embeds its own state and behavior which would be otherwise mixed with the ones of the structure and other actions.
 In addition we can have multiple visitors visiting the same structure without mixing their concerns. 
+Finally a visitor is modular because you may execute one and not another one or even load another one. 
 
 +A simple hierarchy of expressions.>file://figures/ExpressionsHierarchyFinal.pdf|width=50|label=fig:ExpressionWithEvaluateWith+
 
@@ -26,7 +27,7 @@ Note that expression trees are similar to the ones that are used to manipulate p
 For example, compilers and code refactorings as offered in Pharo and many modern IDEs are doing such manipulation with trees representing code (often called Abstract Syntax Trees).
 
 In the rest of this chapter we will introduce step by step a visitor and we will incrementally replace the recursive calls by calls to the a visitor. 
-Doing so we will make sure that all the 
+Doing so we will make sure that all the tests still pass.
 
 !!! Visitor's key principle
 
