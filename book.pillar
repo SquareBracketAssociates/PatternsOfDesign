@@ -6,10 +6,14 @@ ${inputFile:path=Chapters/DSL/DSL.pillar}$
 ${inputFile:path=Chapters/Expression/Expression.pillar}$
 
 ! Power of Messages
-%DSL DD
-${inputFile:path=Chapters/DoubleDispatch/DoubleDispatch.pillar}$
 
 ${inputFile:path=Chapters/PaperStoneScissor/PaperStoneScissor.pillar}$
+${inputFile:path=Chapters/PaperStoneScissor/PaperStoneScissorSolution.pillar}$
+
+%DSL DD
+${inputFile:path=Chapters/DoubleDispatch/DoubleDispatch.pillar}$
+${inputFile:path=Chapters/DoubleDispatch/DoubleDispatchSolution.pillar}$
+
 
 ! Playing with Visitors
 Here I should take the slides flow from the design mooc lectures. 

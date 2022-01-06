@@ -146,8 +146,8 @@ But let us makes this really concrete.
 
 
 !!! Adding two dice
-Let us step back and start by supporting the sum of two dice. This is rather simple we create and return a die 
-handle to which we add the receiver and the argument.
+Let us step back and start by supporting the sum of two dice. 
+This is rather simple we create and return a die  handle to which we add the receiver and the argument.
 
 [[[	
 Die >> + aDie
@@ -178,20 +178,31 @@ DieTest >> testAddingADieAndHandle
 
 The previous method ==\+== is definitively what we want to do when we have two dice. So let us rename it as ==sumWithDie:== so that we can invoke it later. 
 
+%[[[
+%Die >> sumWithDie: aDie
+
+%	^ DieHandle new
+%		addDie: self;
+%		addDie: aDie; yourself
+%]]]
+
 [[[
 Die >> sumWithDie: aDie
-
-	^ DieHandle new
-		addDie: self;
-		addDie: aDie; yourself
+	... Your code ...
 ]]]
 
 Now what we can do is to implement ==\+== as follows. Notice that we named the argument ==aDicable== because we want to convey that the argument can be either a die or a die handle. 
 
 [[[
 Die >> + aDicable	
-	^ aDicable sumWithDie: self
+	... Your code ...
 ]]]
+
+
+%[[[
+%Die >> + aDicable	
+%	^ aDicable sumWithDie: self
+%]]]
 
 We tell the argument ==aDicable== (which can be a die or a die handle) that we want to add a die to it (we know that  ==self== in this method is a ==Die== because this is the method of this class that is executed). When rewritting the ==\+== method, we switched ==self== and ==aDicable== to send the new message ==sumWithDie:== to the argument (==aDicable==). This switch kicks a new method dispatch and we finally have a double dispatch (one of ==\+== and one for ==sumWithDie:==).
 
@@ -211,12 +222,17 @@ So we just have to define the method ==sumWithDie:== to the class ==DieHandle== 
 
 [[[
 DieHandle >> sumWithDie: aDie
-	| handle |
-	handle := self class new.
-	self dice do: [ :each | handle addDie: each ].
-	handle addDie: aDie.
-	^ handle
+	... Your code ...
 ]]]
+
+%[[[
+%DieHandle >> sumWithDie: aDie
+%	| handle |
+%	handle := self class new.
+%	self dice do: [ :each | handle addDie: each ].
+%	handle addDie: aDie.
+%	^ handle
+%]]]
 
 
 Now we are able to sum a die with a die handle as shown in Figure *@figDieDoubleDispatchPartialArgDieHandle*. The test ==testAddingADieAndHandle== should now pass.
@@ -244,18 +260,30 @@ as ==sumWithHandle:== to be able to invoke it while redefining the method ==\+==
 
 [[[
 DieHandle >> sumWithHandle: aDieHandle
-	| handle |
-	handle := self class new.
-	self dice do: [ :each | handle addDie: each ].
-	aDieHandle dice do: [ :each | handle addDie: each ].
-	^ handle
+	... Your code ...
 ]]]
+
+%[[[
+%DieHandle >> sumWithHandle: aDieHandle
+%	| handle |
+%	handle := self class new.
+%	self dice do: [ :each | handle addDie: each ].
+%	aDieHandle dice do: [ :each | handle addDie: each ].
+%	^ handle
+%]]]
+
 
 Now we can define a more powerful version of ==\+== by simply sending the message ==sumWithHandle:== to the ""argument"" (aDicable) of the message ==\+==. Again we send a message to the argument (==aDicable==) to kick in a new message lookup and dispatch for the message ==sumWithHandle:==.
 
+
+%[[[
+%DieHandle >> + aDicable
+%	^ aDicable sumWithHandle: self
+%]]]
+
 [[[
 DieHandle >> + aDicable
-	^ aDicable sumWithHandle: self
+	... Your code ...
 ]]]
 
 We said that this is version of ==\+== is more powerful than the one of ==sumWithHandle:== because once we will implement the missing method ==sumWithHandle:== on the class ==Die==, the ==\+== method will be able to sum a die handle with a die or two die handles. 
@@ -270,12 +298,18 @@ The logic is similar to the one adding one die to one die handle
 
 [[[
 Die >> sumWithHandle: aDieHandle
-	| handle |
-	handle := DieHandle new.
-	aDieHandle dice do: [ :each | handle addDie: each ].
-	handle addDie: self.
-	^ handle
+	... Your code ...
 ]]]
+
+
+%[[[
+%Die >> sumWithHandle: aDieHandle
+%	| handle |
+%	handle := DieHandle new.
+%	aDieHandle dice do: [ :each | handle addDie: each ].
+%	handle addDie: self.
+%	^ handle
+%]]]
 
 Note that we could have  sent the message ==aDieHandle sumWithDie: self== as body of ==sumWithHandle:== definition.
 
