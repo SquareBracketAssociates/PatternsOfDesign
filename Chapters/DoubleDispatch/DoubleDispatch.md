@@ -99,7 +99,7 @@ We want to add two dice together:
 DieTest >> testAddTwoDice
 	| hd |
 	hd := (Die withFaces: 6) + (Die withFaces: 6).
-	self assert: hd dice size equals: 2.
+	self assert: hd diceNumber equals: 2.
 ```
 
 
@@ -113,7 +113,7 @@ DieTest >> testAddingADieAndHandle
 		(DieHandle new
 			addDie: (Die withFaces: 10);
 			yourself).
-	self assert: hd dice size equals: 2
+	self assert: hd diceNumber equals: 2
 ```
 
 ```
