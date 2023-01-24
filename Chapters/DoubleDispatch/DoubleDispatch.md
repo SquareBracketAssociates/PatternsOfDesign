@@ -21,18 +21,17 @@ The following tests show these two behaviors: First the dice handle creation and
 DieHandleTest >> testCreationAdding
 	| handle |
 	handle := DieHandle new
-		addDie: (Die faces: 6);
-		addDie: (Die faces: 10);
+		addDie: (Die withFaces: 6);
+		addDie: (Die withFaces: 10);
 		yourself.
-	self assert: handle diceNumber = 2
+	self assert: handle diceNumber equals: 2
 ```
-
 
 ```
 DieHandleTest >> testSummingWithNiceAPI
 	| handle |
 	handle := 2 D20 + 3 D10.
-	self assert: handle diceNumber = 5
+	self assert: handle diceNumber equals: 5
 ```
 
 
@@ -48,6 +47,21 @@ DieHandle >> + aDieHandle
 	^ handle
 ```
 
+### [Optional] Alternate way 
+
+We could also implement `+` using by asking the argument die handle to add its own dice as follows: 
+
+```
+DieHandle >> + aDieHandle
+	"Returns a new handle that represents the addition of the receiver and the argument."
+	| handle |
+	handle := self class new.
+	self dice do: [ :each | handle addDie: each ].
+	aDieHandle addDiceTo: handle.
+	^ handle
+```
+
+Implement the corresponding method `addDiceTo:` and verify that your tests still pass. 
 
 
 ### New requirements 
@@ -85,7 +99,7 @@ We want to add two dice together:
 DieTest >> testAddTwoDice
 	| hd |
 	hd := (Die withFaces: 6) + (Die withFaces: 6).
-	self assert: hd dice size = 2.
+	self assert: hd dice size equals: 2.
 ```
 
 
@@ -94,7 +108,7 @@ The second requirement is that we want to be able to mix and add a die to a die 
 ```
 DieTest >> testAddingADieAndHandle
 	| hd |
-	hd := (Die faces: 6)
+	hd := (Die withFaces: 6)
 		+
 		(DieHandle new
 			addDie: (Die withFaces: 10);
@@ -119,29 +133,15 @@ can have much better tests.
 
 ### Introducing faces on DieHandle
 
-The  previous test `testAddingADieAndHandle` is not really good because it can pass just if we add two objects in the diehandle and this is not really satisfactory. 
-
-```
-DieTest >> testAddingADieAndHandle
-	| hd |
-	hd := (Die faces: 6)
-		+
-		(DieHandle new
-			addDie: (Die withFaces: 10);
-			yourself).
-	self assert: hd dice size equals: 2
-```
-
-
+The  previous test `testAddingADieAndHandle` is not really good because it can pass just if we add two objects in the die handle and this is not really satisfactory. 
 We will introduce `numberOfFaces`. This method should satisfy the following test: 
-
 
 ```
 DieTest >> testNumberOfFaces
 	| hd |
 	hd := (DieHandle new
-			addDie: (Die faces: 10);
-			addDie: (Die faces: 6);
+			addDie: (Die withFaces: 10);
+			addDie: (Die withFaces: 6);
 			yourself).
 	self assert: hd faces equals: 16
 ```
@@ -153,11 +153,6 @@ DieHandle >> faces
 	"return the number of faces of the receiver"
 	...
 ```
-
-
-
-
-
 
 
 Now we are ready to implement such requirements. 
@@ -200,7 +195,7 @@ The problem of this solution is that it does not scale. As soon as we will have 
 We can do better.  The logic of the solution we have in mind is quite simple but it may be destabilizing at first.
 Let us sketch it.
 
-- When we execute a method we know its receiver and the kind of receiver we have: it can be a die or a die handle. The method dispatch will select the correct method at runtime. Imagine that we have two `+` methods for each class `Die` and `DieHandle`. When a given method `+` will be executed, we will know the exact kind of the receiver. For example, when the method `+` defined on the class `Die` will be executed, we will know that the receiver is a die \(instance of this class\). Similarly when the method `+` defined on the class `DieHandle` will be executed, we will know that the message receiver is a die handle. This is the power of method dispatch: it selects the right method based on the message receiver.
+- When we execute a method we know its receiver and the kind of receiver we have: it can be a die or a die handle. The method dispatch will select the correct method at runtime. Imagine that we have two `+` methods for each class `Die` and `DieHandle`. When a given method `+` will be executed, we will know the exact kind of the receiver. For example, when the method `+` defined on the class `Die` will be executed, we will know that the receiver is a die (instance of this class). Similarly when the method `+` defined on the class `DieHandle` will be executed, we will know that the message receiver is a die handle. This is the power of method dispatch: it selects the right method based on the message receiver.
 
 
 - Then the idea is to tell the argument that we want to sum it with that given receiver. It means that each `+` method on a different class has just to send a different message based on the fact that the receiver was a die or a die handle to its argument and let the method dispatch to act once again. After this second dispatch, the correct method will be selected. 
@@ -274,7 +269,7 @@ Die >> + aDicable
 % 	^ aDicable sumWithDie: self
 % ]]]
 
-We tell the argument `aDicable` \(which can be a die or a die handle\) that we want to add a die to it \(we know that  `self` in this method is a `Die` because this is the method of this class that is executed\). When rewritting the `+` method, we switched `self` and `aDicable` to send the new message `sumWithDie:` to the argument \(`aDicable`\). This switch kicks a new method dispatch and we finally have a double dispatch \(one of `+` and one for `sumWithDie:`\).
+We tell the argument `aDicable` (which can be a die or a die handle) that we want to add a die to it (we know that  `self` in this method is a `Die` because this is the method of this class that is executed). When rewritting the `+` method, we switched `self` and `aDicable` to send the new message `sumWithDie:` to the argument (`aDicable`). This switch kicks a new method dispatch and we finally have a double dispatch (one of `+` and one for `sumWithDie:`).
 
 In our two tests `testAddTwoDice` and `testAddingADieAndHandle` we know that the receiver is a die because the method is defined in the class of `Die`. At this point the test `testAddTwoDice` should pass because we are adding two dice as shown in Figure *@figDieDoubleDispatchPartialArgDie@*.
 
