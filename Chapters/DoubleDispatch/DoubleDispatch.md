@@ -119,7 +119,7 @@ can have much better tests.
 
 ### Introducing faces on DieHandle
 
-The  previous test ==testAddingADieAndHandle== is not really good because it can pass just if we add two objects in the diehandle and this is not really satisfactory. 
+The  previous test `testAddingADieAndHandle` is not really good because it can pass just if we add two objects in the diehandle and this is not really satisfactory. 
 
 ```
 DieTest >> testAddingADieAndHandle
@@ -133,7 +133,7 @@ DieTest >> testAddingADieAndHandle
 ```
 
 
-We will introduce ==numberOfFaces==. This method should satisfy the following test: 
+We will introduce `numberOfFaces`. This method should satisfy the following test: 
 
 
 ```
@@ -146,7 +146,7 @@ DieTest >> testNumberOfFaces
 	self assert: hd faces equals: 16
 ```
 
-Define the method ==faces== on ==DieHandle==. It is following nearly the same logic as the method ==roll==.
+Define the method `faces` on `DieHandle`. It is following nearly the same logic as the method `roll`.
 
 ```
 DieHandle >> faces
