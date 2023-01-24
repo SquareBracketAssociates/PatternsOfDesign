@@ -1,0 +1,10 @@
+{
+    "title": "Patterns of Design",
+    "attribution": "Stéphane  Ducasse",
+    "series": "Square Bracket Books",
+    "keywords": "design, object-oriented programming, Pharo",
+  "newLine": #unix,
+  "latexWriter": #'latex:sbabook',
+  "headingLevelOffset":"2",
+  "htmlWriter": #html
+}
