@@ -235,7 +235,7 @@ DieTest >> testAddingADieAndHandle
 		(DieHandle new
 			addDie: 6;
 			yourself).
-	self assert: hd dice size equals: 2
+	self assert: hd diceNumber equals: 2
 ```
 
 
