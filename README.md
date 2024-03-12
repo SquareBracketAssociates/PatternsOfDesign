@@ -2,8 +2,6 @@
 
 This book explains presents design elements of object programming 
 
-[![Build status][badge]][travis]
-
 [![Download PDF](https://img.shields.io/badge/Download-PDF-9cf.svg)](https://github.com/SquareBracketAssociates/PatternsOfDesign/releases/download/latest/Pattern-wip.pdf)
 [![Centralized book generation](https://github.com/SquareBracketAssociates/PatternsOfDesign/actions/workflows/main.yml/badge.svg)](https://github.com/SquareBracketAssociates/PatternsOfDesign/actions/workflows/main.yml)
 
